@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" type="text/css" href="../static/css/todo.css">
+    
+    <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap-vue-v2.7.0.css">
+    <link rel="stylesheet" type="text/css" href="../static/fontawesome-free-5.12.1-web/css/all.min.css">
+    
+    <!-- <link rel="stylesheet" type="text/css" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/> -->
+    <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous"> -->
+
+
+    <!-- Vue and Bootstrap-Vue js -->    
+    <script src="../static/js/libs/vue.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    
+    <script src="../static/js/libs/polyfill.min.js"></script>
+    <script src="../static/js/libs/bootstrap-vue.js"></script>
+    <script src="../static/js/libs/popper.js"></script>
+    <script src="../static/js/libs/showdown.min.js"></script>
+
+    <!-- <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+    <script src="https://unpkg.com/browse/popper.js@1.16.0/dist/popper.js"></script>
+    <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script> -->
+    
+    <!-- <script src="../static/js/socket.io.min.js"></script> -->
+    
+    <title> Todo app </title>
+</head>
+
+<body>
+    <div id="app">
+        <div class="left-right-container">
+            <div class="left-column">
+                
+                <section>
+                    <hr class="mb-0">
+                    <h5 class="ml-1">
+                        <i class="fas fa-bars text-muted"></i>
+                        Lists
+                    </h5>
+
+                    <ul class="lists-sidebar">
+                        <li v-for="item in lists" v-bind:key="item.name">
+                            @{ item.name }
+                            <i class="fas fa-eye float-right" style="opacity: 0.7; line-height: 1.8;"></i>
+                        </li>
+                        <li class="text-right" v-b-modal.new-list-modal>
+                            Add List <i class="fas fa-plus"></i>
+                        </li>
+                    </ul>
+
+                    <!-- <b-list-group flush>
+                        <b-list-group-item href="#" v-for="item in lists" v-bind:key="item.name" variant="light">
+                            @{ item.name }
+                            <i class="fas fa-eye float-right" style="opacity: 0.7; line-height: 1.5;"></i>
+                        </b-list-group-item>
+                        <b-list-group-item class="text-muted text-right" href="#" variant="light" v-b-modal.new-list-modal>
+                            Add List <i class="fas fa-plus"></i>
+                        </b-list-group-item>
+                    </b-list-group> -->
+                </section>
+
+
+                <!-- <section>
+                    <b-button variant="primary" v-on:click="showStorage">storage</b-button>
+                </section> -->
+
+                
+                <section>
+                    <hr class="mb-0">
+                    <div class="px-1" style="float: right; opacity: 0.6;">
+                        <!-- <div class="mt-1"></div> -->
+                        <b-button class="p-1" size="sm" ref="addtag" @click="$refs.tagbox.newTagInput=true" variant="light" style="border-color: transparent; font-size: .8rem; line-height: 1.0;">
+                            <i class="fas fa-plus"></i>
+                        </b-button>
+                        <b-button class="p-1" size="sm" @click="$refs.tagbox.deleteSelectedTags()" variant="light" style="border-color: transparent; font-size: .8rem; line-height: 1.0;">
+                            <i class="fas fa-trash"></i>
+                        </b-button>
+                    </div>
+                    <h5 class="ml-1">
+                        <i class="fas fa-tags text-muted"></i>
+                        Tags
+                    </h5>
+
+                    <tag-box :tags="tags" ref="tagbox"></tag-box>
+                </section>
+                
+
+                <div hidden>
+                    <b-modal id="new-list-modal" title="New list" button-size="md" @ok="okNewListModal">
+                        <b-form>
+                            <b-form-group label="Name">
+                                <b-form-input v-model="newList.name"></b-form-input>
+                            </b-form-group>
+    
+                            <b-form-group label="Tags">
+                                <div style="min-height: 2.2rem; padding: 3px 0px; border: 1px solid #ced4da; border-radius: .25rem;">
+                                    <b-badge
+                                        v-for="tag in selectedTags" :key="'selected-'+tag.id"
+                                        href="#" variant="secondary" class="ml-1 badge-tag"
+                                        @click.left.exact.stop="select(tag)"
+                                    >@{tag.name}</b-badge>
+                                </div>
+                                <div class="position-relative mt-1">
+                                    <div class="overlay" style="height: 0px; margin: 0px;">
+                                        <div class="close d-flex" :style="{opacity: tagFilterText ? 0.8 : ''}">
+                                            <b-input class="visually-hidden" ref="tagfilterinput" v-model="tagFilterText"></b-input>
+
+                                            <div class="p-0 text-muted" style="
+                                                font-size: 1rem; text-shadow: none;
+                                                background-color: #ced4da; border-radius: .25rem;"
+                                            >@{tagFilterText}
+                                                <span class="text-muted p-1" size="sm" @click="$refs.tagfilterinput.focus();tagFilterText='';" variant="light" style="border-color: transparent; float: right; line-height: 1; font-size: .8rem; cursor: pointer;">
+                                                    <i class="fas fa-filter"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <b-badge
+                                        v-for="tag in Object.values(tags).reverse().filter(t=>t.name.includes(tagFilterText))" :key="tag.id"
+                                        href="#" variant="dark" class="ml-1 badge-tag"
+                                        @click.left.exact.stop="select(tag)"
+                                    >@{tag.name}</b-badge>
+                                    
+                                </div>
+                            </b-form-group>
+                        </b-form>
+                    </b-modal>
+                </div>
+
+            </div>
+            
+            <div class="right-column">
+                <div class="content-div">
+                    <todo-list-group :todos="lists" :tasks="tasks" :template="groupViewTemplate" :key="currentView">
+                    </todo-list-group>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!-- Application js -->
+<script src="../static/js/tag-box.js"></script>
+<script src="../static/js/components.js"></script>
+<script src="../static/js/db.js"></script>
+<script src="../static/js/index.js" type="text/javascript" charset="utf-8"></script>
+<!-- <script src="../static/js/index.js" type="module" charset="utf-8"></script> -->
+
+</html>

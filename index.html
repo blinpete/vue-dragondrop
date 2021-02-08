@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag & drop | Cards</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="normalize.css">
+
+</head>
+<body>
+    <article id="app">
+        <h1>VueJS: Drag & drop cards</h1>
+        <div class="container">
+            <ul v-for="list in lists" class="list">
+                <li v-for="item in list.items" class="item">@{item.text}</li>
+            </ul>
+        </div>
+
+        <hr>
+        <div class="container">
+            <div v-for="list in lists" class="info">list: @{list.id}, items: @{list.items.map(i=> i.id)}</div>
+        </div>
+    </article>
+</body>
+
+<script src="./vue.js"></script>
+<script src="index.js"></script>
+
+</html>
