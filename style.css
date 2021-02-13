@@ -31,9 +31,8 @@ h1 {
 .list {
     width: 300px;
     background-color: rgb(211, 211, 211);
-    padding: 0;
     border-radius: 1px;
-    padding: 3px;
+    padding: 4px;
 }
 
 .item {
@@ -56,4 +55,10 @@ h1 {
     width: 300px;
 }
 
+
+hr {
+    border: 0;
+    background: linear-gradient(to right,transparent, rgb(154 163 181) 30% 70%, transparent);
+    height: 1px;
+}
 
