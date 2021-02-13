@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drag & drop | Cards</title>
 
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="normalize.css">
+    <link rel="stylesheet" href="style.css">
 
 </head>
 <body>
     <article id="app">
         <h1>VueJS: Drag & drop cards</h1>
         <div class="container">
-            <ul v-for="list in lists" class="list">
-                <li v-for="item in list.items" class="item">@{item.text}</li>
-            </ul>
+            <Container v-for="list in lists">
+                <Draggable v-for="item in list.items" class="item">@{item.text}</Draggable>
+            </Container>
         </div>
 
         <hr>
@@ -26,6 +26,10 @@
 </body>
 
 <script src="./vue.js"></script>
+<script src="./_utils.js"></script>
+<script src="./_container.js"></script>
+<script src="./_element.js"></script>
+<script src="./_components.js"></script>
 <script src="index.js"></script>
 
 </html>
