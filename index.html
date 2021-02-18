@@ -14,7 +14,7 @@
         <h1>VueJS: Drag & drop cards</h1>
         <div class="container">
             <Container v-for="list in lists">
-                <Draggable v-for="item in list.items" class="item">@{item.text}</Draggable>
+                <Draggable v-for="(item,idx) in list.items" class="item" :index="item.id">@{item.text}</Draggable>
             </Container>
         </div>
 
@@ -27,6 +27,7 @@
 
 <script src="./vue.js"></script>
 <script src="./_utils.js"></script>
+<script src="./_manager.js"></script>
 <script src="./_container.js"></script>
 <script src="./_element.js"></script>
 <script src="./_components.js"></script>
