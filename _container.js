@@ -72,6 +72,26 @@ const ContainerMixin = {
       this.handlePress(e);
     },
 
+    handleSortEnd(e){
+      console.log("[handleSortEnd] dragging end");
+
+      // Remove the event listeners if the node is still in the DOM
+      if (this.listenerNode) {
+        eventManager.removeListeners(this.listenerNode, {move: this.handleSortMove})
+        eventManager.removeListeners(this.listenerNode, {end: this.handleSortEnd})
+      }
+
+      // Remove the helper from the DOM
+      this.manager.helper.parentNode.removeChild(this.manager.helper);
+
+      // move the preview node to hidden div
+      this.manager.previewNode.parentNode.appendChild(this.manager.previewNode.node);
+
+      this.manager.dragging = false;
+
+    },
+
+
     handlePress(e){
       this.manager.dragging = true;
       const node = this.manager.node;
@@ -119,18 +139,9 @@ const ContainerMixin = {
 
 
       this.listenerNode = e.touches ? node : this._window;
-      eventManager.move.forEach(eventName =>
-        this.listenerNode.addEventListener(
-          eventName,
-          this.handleSortMove,
-          false
-        ));
-      eventManager.end.forEach(eventName =>
-        this.listenerNode.addEventListener(
-          eventName,
-          this.handleSortEnd,
-          false
-        ));
+      eventManager.addListeners(this.listenerNode, {move: this.handleSortMove});
+      eventManager.addListeners(this.listenerNode, {end: this.handleSortEnd});
+
 
       this.sorting = true;
       // this.sortingIndex = index;
