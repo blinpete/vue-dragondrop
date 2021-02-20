@@ -34,13 +34,16 @@ h1 {
     border-radius: 1px;
     padding: 4px;
 }
+.list:first-child {
+    width: 250px;
+}
 
 .item {
     background-color: #fff;
     list-style: none;
     padding: 10px 15px;
     margin: 3px 0 0 0;
-    border-top: 1px solid rgb(194, 192, 192);
+    /* border-top: 1px solid rgb(194, 192, 192); */
 }
 
 .list .item:first-of-type {
