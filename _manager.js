@@ -1,8 +1,5 @@
 
 const manager = {
-    activeIndex: null,
-    node: null,
-    dragging: null,
 
     previewNode: {
         parentId: "__preview_hidden__",
@@ -12,9 +9,21 @@ const manager = {
             height: '80px',
             border: '2px dashed #abc',
             boxSizing: 'border-box',
-            marginTop: '3px',
+            margin: '3px 0',
         },
-    }
+    },
+
+    
+    init(){
+      this.cache = {};          // to cache something within a DnD action
+      this.dragging = null;     // Draggable compo that is dragging
+
+      this.hovered = null;      // Draggable compo that is hovered
+      this.container = null;    // Container compo (parent of this.hovered)
+
+      this.oldLocation = null;  // {array, index} where the draggable item taken
+      this.newLocation = null;  // {array, index} where the draggable item dropped
+    },
 };
 
 // preview element
@@ -31,3 +40,6 @@ manager.previewNode.node = document.getElementById(manager.previewNode.id);
 Object.entries(manager.previewNode.style).forEach(([k,v]) => {
     manager.previewNode.node.style[k] = v;
 });
+
+
+manager.init();
