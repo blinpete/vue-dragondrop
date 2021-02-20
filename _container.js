@@ -5,6 +5,7 @@
 const ContainerMixin = {
   props: {
     // value:                      { type: Array,   required: true },
+    list:                       { type: Array, required: true },
     axis:                       { type: String,  default: 'y' }, // 'x', 'y', 'xy'
     distance:                   { type: Number,  default: 0 },
     pressDelay:                 { type: Number,  default: 0 },
@@ -72,6 +73,12 @@ const ContainerMixin = {
       this.handlePress(e);
     },
 
+    onDrop(e,oldLocation,newLocation){
+      console.log("[onDrop]");
+
+      arrayMoveElement(oldLocation,newLocation);
+    },
+
     handleSortEnd(e){
       console.log("[handleSortEnd] dragging end");
 
@@ -84,22 +91,34 @@ const ContainerMixin = {
       // Remove the helper from the DOM
       this.manager.helper.parentNode.removeChild(this.manager.helper);
 
-      // move the preview node to hidden div
+      // Move the preview node to hidden div
       this.manager.previewNode.parentNode.appendChild(this.manager.previewNode.node);
 
-      this.manager.dragging = false;
 
+      console.log("oldLocation: ", this.manager.oldLocation);
+      console.log("newLocation: ", this.manager.newLocation);
+      this.onDrop(e,this.manager.oldLocation, this.manager.newLocation);
+
+      // this.manager.container.$forceUpdate();
+      if (this.hideSortableGhost) {
+        this.manager.dragging.$el.style.display=this.manager.cache.display;
+      }
+
+      this.manager.init();
     },
 
 
     handlePress(e){
-      this.manager.dragging = true;
-      const node = this.manager.node;
+      this.manager.dragging = this.manager.hovered;
+      this.manager.oldLocation = {array: this.list, index: this.manager.hovered.index};
+      this.manager.newLocation = Object.assign({},this.manager.oldLocation);
+
+
+      const node = this.manager.dragging.$el;
       const clone = node.cloneNode(true);
       
       const {
         axis,
-        getHelperDimensions,
         helperClass,
         hideSortableGhost,
         useWindowAsScrollContainer,
@@ -107,7 +126,7 @@ const ContainerMixin = {
       } = this.$props;
 
       // this.offsetEdge = this.getEdgeOffset(node);
-      this.initialOffset = this.getOffset(e);
+      this.initialOffset = getOffset(e);
 
 
       // ------------------------------------------ helper --------------
@@ -125,10 +144,11 @@ const ContainerMixin = {
       // helper.style.height =
 
       if (this.hideSortableGhost) {
-        this.sortableGhost = node;
+        // this.sortableGhost = node;
         // node.style.visibility = 'hidden';
         // node.style.opacity = 0;
-        node.style.display = "none"
+        this.manager.cache.display = node.style.display;
+        node.style.display = "none";
       }
 
       if (helperClass) {
@@ -154,20 +174,33 @@ const ContainerMixin = {
     handleSortMove(e) {
       e.preventDefault(); // Prevent scrolling on mobile
 
-      console.log("[handleSortMove]");
+      // console.log("[handleSortMove]");
 
       this.updatePosition(e);
+
+      if (this.manager.hovered) {
+        const preview = this.manager.previewNode.node;
+
+        const hoveredCenterY = getElementCenter(this.manager.hovered.$el, 'y').y;
+        const helperCenterY = getElementCenter(this.manager.helper, 'y').y;
+        if (helperCenterY < hoveredCenterY) {
+          console.log("[handleSortMove] upper half hovered");
+          // console.log({pos: pos.y, center: hoveredRect.centerY});
+
+          this.manager.container.$el.insertBefore(preview, this.manager.hovered.$el);
+          this.manager.newLocation = {array: this.manager.container.list, index: this.manager.hovered.index};
+        }
+        else {
+          console.log("[handleSortMove] lower half hovered");
+          this.manager.container.$el.insertBefore(preview, this.manager.hovered.$el.nextSibling);
+          this.manager.newLocation = {array: this.manager.container.list, index: this.manager.hovered.index+1};
+        }
+      }
+
       // this.animateNodes();
       // this.autoscroll();
 
       // this.$emit('sort-move', { event: e });
-    },
-
-    getOffset(e) {
-      return {
-        x: e.touches ? e.touches[0].pageX : e.pageX,
-        y: e.touches ? e.touches[0].pageY : e.pageY,
-      };
     },
 
     updatePosition(e){
@@ -179,7 +212,7 @@ const ContainerMixin = {
       // this.helper.style.left = pos.x;
       // this.helper.style.top = pos.y;
 
-      const offset = this.getOffset(e);
+      const offset = getOffset(e);
       const translate = {
         x: offset.x - this.initialOffset.x,
         y: offset.y - this.initialOffset.y,
