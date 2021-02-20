@@ -13,8 +13,8 @@
     <article id="app">
         <h1>VueJS: Drag & drop cards</h1>
         <div class="container">
-            <Container v-for="list in lists">
-                <Draggable v-for="(item,idx) in list.items" class="item" :index="item.id">@{item.text}</Draggable>
+            <Container v-for="list in lists" :list="list.items">
+                <Draggable v-for="(item,idx) in list.items" class="item" :key="item.id" :index="idx" :item="item">@{item.text}</Draggable>
             </Container>
         </div>
 
