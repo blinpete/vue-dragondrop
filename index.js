@@ -1,25 +1,21 @@
 
+const lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
 
-const lists = [
-    {
-        id: 1, 
-        items: [
-            {id: 11, text: "item 11"},
-            {id: 12, text: "item 12"},
-            {id: 13, text: "item 13 some text some text some text"},
-            {id: 14, text: "item 14"},
-        ]
-    },
-    {
-        id: 2, 
-        items: [
-            {id: 21, text: "item 21"},
-            {id: 22, text: "item 22 some very very long text here and some more text and text again and again"},
-            {id: 23, text: "item 23"},
-            {id: 24, text: "item 24"},
-        ]
-    },
-];
+function dummyLists(){
+
+    var lists = [];
+    for (var i in arguments) {
+        lists.push( {id: +i+1, items: []} );
+        for (k in Array(arguments[i]).fill()) {
+            var id = +k+100*(+i+1);
+            lists[i].items.push({id: id, text: `item ${id} `+lorem.substr(0,parseInt(100*Math.random()))})
+        }
+    }
+
+    return lists;
+}
+
+const lists = dummyLists(15,25);
 
 
 window.app = new Vue({
