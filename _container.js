@@ -109,6 +109,13 @@ const ContainerMixin = {
 
 
     handlePress(e){
+
+      if (!this.manager.hovered) {
+        // it is a scroll
+        // or click outside an item
+        return;
+      }
+
       this.manager.dragging = this.manager.hovered;
       this.manager.oldLocation = {array: this.list, index: this.manager.hovered.index};
       this.manager.newLocation = Object.assign({},this.manager.oldLocation);
