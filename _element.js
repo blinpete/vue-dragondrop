@@ -6,13 +6,15 @@ const ElementMixin = {
   // inject: ['manager'],
   props: {
     index: Number,
+    item: Object,
   },
 
   data(){
     return {
       manager: manager,
       events: {
-        hover: this.onHover
+        enter: this.onHover,
+        leave: this.onLeave,
       },
     };
   },
@@ -26,28 +28,43 @@ const ElementMixin = {
   },
 
   methods: {
+    onLeave(e){
+      console.log("[onLeave] item.id: ", this.item.id);
+      this.manager.hovered = null;
+    },
     onHover(e){
-      console.log("[onHover] item.id: ", this.index);
+      console.log("[onHover] item.id: ", this.item.id);
+      // console.log("[onHover] item.id: ", this.$props);
 
       if (this.manager.dragging) {
-        console.log("[onHover] adding ::before element");
-        console.log("[onHover] classList: ",this.manager.node.classList);
-
         if (this.$parent.groupName !== this.manager.groupName) {
+          console.log("group names are not equal... ending onHover");
           return;
         }
+
+        this.manager.container = this.$parent;
 
         const hs = this.manager.helper.style;
         const preview = this.manager.previewNode.node;
 
-        preview.style.width  = this.$el.offsetWidth+'px'; 
-        preview.style.height = hs.width*hs.height/preview.st
-        this.$parent.$el.insertBefore(preview, this.$el);
+
+        // --------------------------- preview styling -----------
+        const pWidth = this.$el.offsetWidth;
+        const hArea = getCSSPixelValue(hs.width)*getCSSPixelValue(hs.height);
+        preview.style.height = hArea/pWidth + 'px';
+
+        // TODO: resizing a helper on the fly 
+        // commented for now cause it requires translating a helper to keep it under a cursor
+        // hs.width = pWidth+'px';
+        // preview.style.height  = hs.height; 
+        
+        preview.style.width  = pWidth+'px'; 
+        // -------------------------------------------------------
+
       }
 
-      this.manager.activeIndex = this.index;
-      this.manager.node = this.$el;
-
+      // this.manager.hovered = {node: this.$el, index: this.index};
+      this.manager.hovered = this;
     },
   },
 };
