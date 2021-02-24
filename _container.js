@@ -103,6 +103,9 @@ const ContainerMixin = {
       console.log("newLocation: ", this.manager.newLocation);
       this.onDrop(e,this.manager.oldLocation, this.manager.newLocation);
 
+      // to clear autoscroll
+      this.stopAutoscroll();
+
       // this.manager.container.$forceUpdate();
       if (this.hideSortableGhost) {
         this.manager.dragging.$el.style.display=this.manager.cache.display;
