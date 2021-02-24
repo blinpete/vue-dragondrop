@@ -54,6 +54,10 @@ const ContainerMixin = {
     this.document = this.container.ownerDocument || document;
     this._window = this.contentWindow || window;
 
+    this.scrollContainer = this.useWindowAsScrollContainer
+      ? this.document.body
+      : this.$el;
+
     eventManager.addListeners(this.container, this.events);
   },
 
@@ -145,10 +149,10 @@ const ContainerMixin = {
       helper.style.pointerEvents = 'none';
 
       Object.assign(helper.style, measures);
-      // helper.style.top    = 
-      // helper.style.left   =
-      // helper.style.width  =
-      // helper.style.height =
+
+      // it must go before hideSortableGhost
+      this.boundingClientRect = node.getBoundingClientRect();
+
 
       if (this.hideSortableGhost) {
         // this.sortableGhost = node;
@@ -163,6 +167,59 @@ const ContainerMixin = {
       }
       this.manager.helper = helper;
       // ----------------------------------------------------------------
+
+
+      // ----------------------------- scroll --------------------------------
+      this._axis = {
+        x: axis.indexOf('x') >= 0,
+        y: axis.indexOf('y') >= 0,
+      };
+      this.initialScroll = {
+        top: this.scrollContainer.scrollTop,
+        left: this.scrollContainer.scrollLeft,
+      };
+
+      this.initialWindowScroll = {
+        top: window.pageYOffset,
+        left: window.pageXOffset,
+      };
+
+      const containerBoundingRect = this.$el.getBoundingClientRect();
+
+      // const {width, height} = this.boundingClientRect;
+
+      this.translate = {};
+        this.minTranslate = {};
+        this.maxTranslate = {};
+
+        if (this._axis.x) {
+          this.minTranslate.x = (useWindowAsScrollContainer
+            ? 0
+            : containerBoundingRect.left) -
+            this.boundingClientRect.left -
+            this.boundingClientRect.width / 2;
+          this.maxTranslate.x = (useWindowAsScrollContainer
+            ? this._window.innerWidth
+            : containerBoundingRect.left + containerBoundingRect.width) -
+            this.boundingClientRect.left -
+            this.boundingClientRect.width / 2;
+        }
+
+        if (this._axis.y) {
+          this.minTranslate.y = (useWindowAsScrollContainer
+            ? 0
+            : containerBoundingRect.top) -
+            this.boundingClientRect.top -
+            this.boundingClientRect.height / 2 ;
+          this.maxTranslate.y = (useWindowAsScrollContainer
+            ? this._window.innerHeight
+            : containerBoundingRect.top + containerBoundingRect.height) -
+            this.boundingClientRect.top -
+            this.boundingClientRect.height / 2 ;
+        }
+      // --------------------------------------------------------------------
+
+
 
 
       this.listenerNode = e.touches ? node : this._window;
@@ -205,7 +262,7 @@ const ContainerMixin = {
       }
 
       // this.animateNodes();
-      // this.autoscroll();
+      this.autoscroll();
 
       // this.$emit('sort-move', { event: e });
     },
@@ -230,6 +287,82 @@ const ContainerMixin = {
       this.manager.helper.style[
         `${vendorPrefix}Transform`
       ] = `translate3d(${translate.x}px,${translate.y}px, 0)`;
+    },
+
+    stopAutoscroll(){
+      if (this.autoscrollInterval) {
+        clearInterval(this.autoscrollInterval);
+        this.autoscrollInterval = null;
+        this.isAutoScrolling = false;
+      }
+    },
+
+    autoscroll() {
+
+      if (!this.manager.dragging)
+        return;
+
+      const translate = this.translate;
+      const direction = {
+        x: 0,
+        y: 0,
+      };
+      const speed = {
+        x: 1,
+        y: 1,
+      };
+      const acceleration = {
+        x: 10,
+        y: 10,
+      };
+
+      const {height,width} = this.boundingClientRect;
+
+      if (translate.y >= this.maxTranslate.y - height / 2) {
+        direction.y = 1; // Scroll Down
+        speed.y = acceleration.y * Math.abs((this.maxTranslate.y - height / 2 - translate.y) / height);
+      } else if (translate.x >= this.maxTranslate.x - width / 2) {
+        direction.x = 1; // Scroll Right
+        speed.x = acceleration.x * Math.abs((this.maxTranslate.x - width / 2 - translate.x) / width);
+      } else if (translate.y <= this.minTranslate.y + height / 2) {
+        direction.y = -1; // Scroll Up
+        speed.y = acceleration.y * Math.abs((translate.y - height / 2 - this.minTranslate.y) / height);
+      } else if (translate.x <= this.minTranslate.x + width / 2) {
+        direction.x = -1; // Scroll Left
+        speed.x = acceleration.x * Math.abs((translate.x - width / 2 - this.minTranslate.x) / width);
+      }
+
+      // console.log("[autoscroll] direction: ", direction);
+      // console.log("[autoscroll] translate: ", translate);
+      // console.log("[autoscroll] speed: ", speed);
+      // console.log("[autoscroll] helper.height: ", height);
+      // console.log("[autoscroll] this.minTranslate: ", this.minTranslate);
+      // console.log("[autoscroll] this.maxTranslate: ", this.maxTranslate);
+      // console.log("[autoscroll] this.initialOffset: ", this.initialOffset);
+
+
+      this.stopAutoscroll();
+
+      if (direction.x !== 0 || direction.y !== 0) {
+        this.autoscrollInterval = setInterval(
+          () => {
+            this.isAutoScrolling = true;
+            const offset = {
+              left: 1 * speed.x * direction.x,
+              top: 1 * speed.y * direction.y,
+            };
+            this.scrollContainer.scrollTop += offset.top;
+            this.scrollContainer.scrollLeft += offset.left;
+            this.translate.x += offset.left;
+            this.translate.y += offset.top;
+
+            // this.animateNodes();
+            // node.style[`${vendorPrefix}Transform`] = `translate3d(${translate.x}px,${translate.y}px,0)`;
+
+          },
+          5
+        );
+      }
     },
 
   },
