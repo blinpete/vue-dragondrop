@@ -42,8 +42,6 @@ const ElementMixin = {
           return;
         }
 
-        this.manager.container = this.$parent;
-
         const hs = this.manager.helper.style;
         const preview = this.manager.previewNode.node;
 
@@ -65,6 +63,8 @@ const ElementMixin = {
 
       // this.manager.hovered = {node: this.$el, index: this.index};
       this.manager.hovered = this;
+      this.manager.container = this.$parent;
+
     },
   },
 };
