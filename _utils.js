@@ -73,10 +73,13 @@ function getOffset(e) {
 
 function arrayMoveElement(from, to){
   
-  if (to.array.includes(from.array[from.index],from.index+1))
-    to.array.splice(to.index-1, 0, from.array.splice(from.index,1)[0]);
-  else
-    to.array.splice(to.index, 0, from.array.splice(from.index,1)[0]);
+  // if (from.array.includes(to.array[to.index]) && from.index<to.index){
+  // if (from.array.includes(to.array[to.index],from.index)){
+  if (from.array==to.array && from.index<to.index){
+    to.index -= 1;
+  }
+
+  to.array.splice(to.index, 0, from.array.splice(from.index,1)[0]);
 
 }
 
