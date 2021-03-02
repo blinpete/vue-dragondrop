@@ -21,20 +21,13 @@ const ContainerMixin = {
     lockAxis: String,
     helperClass: String,
     contentWindow: Object,
-    shouldCancelStart: { 
-      type: Function, 
+    shouldCancelStart: {
+      type: Function,
       default: (e) => {
         // Cancel sorting if the event target is an `input`, `textarea`, `select` or `option`
         const disabledElements = ['input', 'textarea', 'select', 'option', 'button'];
         return disabledElements.indexOf(e.target.tagName.toLowerCase()) !== -1;
       },
-    },
-    getHelperDimensions: { 
-      type: Function,
-      default: ({node}) => ({
-        width: node.offsetWidth,
-        height: node.offsetHeight,
-      }),
     },
   },
 
@@ -53,10 +46,6 @@ const ContainerMixin = {
     this.container = this.$el;
     this.document = this.container.ownerDocument || document;
     this._window = this.contentWindow || window;
-
-    this.scrollContainer = this.useWindowAsScrollContainer
-      ? this.document.body
-      : this.$el;
 
     eventManager.addListeners(this.container, this.events);
   },
@@ -127,15 +116,16 @@ const ContainerMixin = {
       this.manager.oldLocation = {array: this.list, index: this.manager.hovered.index};
       this.manager.newLocation = Object.assign({},this.manager.oldLocation);
 
+      // this.manager.setScrollContainer();
+
 
       const node = this.manager.dragging.$el;
       const clone = node.cloneNode(true);
-      
+
       const {
         axis,
         helperClass,
         hideSortableGhost,
-        useWindowAsScrollContainer,
         appendTo,
       } = this.$props;
 
@@ -145,7 +135,7 @@ const ContainerMixin = {
 
       // ------------------------------------------ helper --------------
       const measures = getElementMeasures(node);
-      
+
       const helper = document.querySelector(this.appendTo).appendChild(clone);
       helper.style.position = 'fixed';
       helper.style.boxSizing = 'border-box';
@@ -177,49 +167,7 @@ const ContainerMixin = {
         x: axis.indexOf('x') >= 0,
         y: axis.indexOf('y') >= 0,
       };
-      this.initialScroll = {
-        top: this.scrollContainer.scrollTop,
-        left: this.scrollContainer.scrollLeft,
-      };
-
-      this.initialWindowScroll = {
-        top: window.pageYOffset,
-        left: window.pageXOffset,
-      };
-
-      const containerBoundingRect = this.$el.getBoundingClientRect();
-
-      // const {width, height} = this.boundingClientRect;
-
-      this.translate = {};
-        this.minTranslate = {};
-        this.maxTranslate = {};
-
-        if (this._axis.x) {
-          this.minTranslate.x = (useWindowAsScrollContainer
-            ? 0
-            : containerBoundingRect.left) -
-            this.boundingClientRect.left -
-            this.boundingClientRect.width / 2;
-          this.maxTranslate.x = (useWindowAsScrollContainer
-            ? this._window.innerWidth
-            : containerBoundingRect.left + containerBoundingRect.width) -
-            this.boundingClientRect.left -
-            this.boundingClientRect.width / 2;
-        }
-
-        if (this._axis.y) {
-          this.minTranslate.y = (useWindowAsScrollContainer
-            ? 0
-            : containerBoundingRect.top) -
-            this.boundingClientRect.top -
-            this.boundingClientRect.height / 2 ;
-          this.maxTranslate.y = (useWindowAsScrollContainer
-            ? this._window.innerHeight
-            : containerBoundingRect.top + containerBoundingRect.height) -
-            this.boundingClientRect.top -
-            this.boundingClientRect.height / 2 ;
-        }
+      // moved to _manager.js
       // --------------------------------------------------------------------
 
 
@@ -230,10 +178,12 @@ const ContainerMixin = {
       eventManager.addListeners(this.listenerNode, {end: this.handleSortEnd});
 
 
-      this.sorting = true;
+      // this.sorting = true;
       // this.sortingIndex = index;
 
-      this.$emit('sort-start', {event: e, node});
+      // [Note]: this is apparently to provide easy customization
+      // of what should happen on DnD events
+      // this.$emit('sort-start', {event: e, node});
       // this.$emit('sort-start', {event: e, node, index, collection});
 
     },
@@ -265,25 +215,21 @@ const ContainerMixin = {
       }
 
       // this.animateNodes();
-      this.autoscroll();
+      this.autoscroll(e);
 
       // this.$emit('sort-move', { event: e });
     },
 
     updatePosition(e){
-      // const pos = {
-      //   x: e.pageX,
-      //   y: e.pageY,
-      // }
-
-      // this.helper.style.left = pos.x;
-      // this.helper.style.top = pos.y;
 
       const offset = getOffset(e);
       const translate = {
         x: offset.x - this.initialOffset.x,
         y: offset.y - this.initialOffset.y,
       };
+
+      // console.log("[updatePos] offset: ", offset);
+      // console.log("[updatePos] translate: ", translate);
 
       this.translate = translate;
 
@@ -300,68 +246,63 @@ const ContainerMixin = {
       }
     },
 
-    autoscroll() {
+    autoscroll(e) {
 
       if (!this.manager.dragging)
         return;
 
-      const translate = this.translate;
-      const direction = {
-        x: 0,
-        y: 0,
-      };
-      const speed = {
-        x: 1,
-        y: 1,
+      const pointer = {
+        docX: e.pageX,
+        docY: e.pageY,
+        x: e.clientX,
+        y: e.clientY,
       };
       const acceleration = {
         x: 10,
         y: 10,
       };
+      const scrollRequest = {y: 0, x: 0};
 
       const {height,width} = this.boundingClientRect;
 
-      if (translate.y >= this.maxTranslate.y - height / 2) {
-        direction.y = 1; // Scroll Down
-        speed.y = acceleration.y * Math.abs((this.maxTranslate.y - height / 2 - translate.y) / height);
-      } else if (translate.x >= this.maxTranslate.x - width / 2) {
-        direction.x = 1; // Scroll Right
-        speed.x = acceleration.x * Math.abs((this.maxTranslate.x - width / 2 - translate.x) / width);
-      } else if (translate.y <= this.minTranslate.y + height / 2) {
-        direction.y = -1; // Scroll Up
-        speed.y = acceleration.y * Math.abs((translate.y - height / 2 - this.minTranslate.y) / height);
-      } else if (translate.x <= this.minTranslate.x + width / 2) {
-        direction.x = -1; // Scroll Left
-        speed.x = acceleration.x * Math.abs((translate.x - width / 2 - this.minTranslate.x) / width);
+      if (pointer.docY > this.manager.scroll.edges.y.max) {
+        // Scroll Down
+        scrollRequest.y = acceleration.y * (pointer.docY - this.manager.scroll.edges.y.max) / height;
+      } else if (pointer.docY < this.manager.scroll.edges.y.min) {
+        // Scroll Up
+        scrollRequest.y = acceleration.y * (pointer.docY - this.manager.scroll.edges.y.min) / height;
       }
 
-      // console.log("[autoscroll] direction: ", direction);
-      // console.log("[autoscroll] translate: ", translate);
-      // console.log("[autoscroll] speed: ", speed);
+      else if (pointer.docX > this.manager.scroll.edges.x.max) {
+        // Scroll Right
+        scrollRequest.x = acceleration.x * (pointer.docX - this.manager.scroll.edges.x.max) / width;
+      } else if (pointer.docX < this.manager.scroll.edges.x.min) {
+        // Scroll Left
+        scrollRequest.x = acceleration.x * (pointer.docX - this.manager.scroll.edges.x.min) / width;
+      }
+
       // console.log("[autoscroll] helper.height: ", height);
-      // console.log("[autoscroll] this.minTranslate: ", this.minTranslate);
-      // console.log("[autoscroll] this.maxTranslate: ", this.maxTranslate);
-      // console.log("[autoscroll] this.initialOffset: ", this.initialOffset);
+      // console.log("[autoscroll] pointer: ", pointer);
+      // console.log("[autoscroll] scrolledges: ", this.manager.scroll.edges);
+      // console.log("[autoscroll] scrollRequest: ", scrollRequest);
 
 
       this.stopAutoscroll();
 
-      if (direction.x !== 0 || direction.y !== 0) {
+      if (scrollRequest.y || scrollRequest.x) {
         this.autoscrollInterval = setInterval(
           () => {
             this.isAutoScrolling = true;
-            const offset = {
-              left: 1 * speed.x * direction.x,
-              top: 1 * speed.y * direction.y,
-            };
-            this.scrollContainer.scrollTop += offset.top;
-            this.scrollContainer.scrollLeft += offset.left;
-            this.translate.x += offset.left;
-            this.translate.y += offset.top;
+            this.manager.scroll.container.scrollTop += scrollRequest.y;
+            this.manager.scroll.container.scrollLeft += scrollRequest.x;
+
+
+            // Why do we translate a helper with scroll offset?
+            // this.translate.x += scrollRequest.left;
+            // this.translate.y += scrollRequest.top;
 
             // this.animateNodes();
             // node.style[`${vendorPrefix}Transform`] = `translate3d(${translate.x}px,${translate.y}px,0)`;
-
           },
           5
         );
