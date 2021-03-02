@@ -13,7 +13,7 @@ const manager = {
         },
     },
 
-    
+
     init(){
       this.cache = {};          // to cache something within a DnD action
       this.dragging = null;     // Draggable compo that is dragging
@@ -23,7 +23,42 @@ const manager = {
 
       this.oldLocation = null;  // {array, index} where the draggable item taken
       this.newLocation = null;  // {array, index} where the draggable item dropped
+
+      this.scroll = {
+        edges: {x: {}, y: {}},   // container edges (document coordinates)
+        windowEdges: {},        // window edges (viewport coordinates)
+      };
+
+
+      // this.useWindowAsScrollContainer = false;
     },
+
+
+    updateContainer(c){
+      if(this.container === c) return;
+
+      this.container = c;
+      this.scroll.container = c.$el;
+
+      const cRect = c.$el.getBoundingClientRect();
+
+      if (c.axis.includes('x')) {
+        this.scroll.edges.x = {
+          min: window.pageXOffset + cRect.left,
+          max: window.pageXOffset + cRect.left + cRect.width,
+        }
+      }
+
+      if (c.axis.includes('y')) {
+        this.scroll.edges.y = {
+          min: window.pageXOffset + cRect.top,
+          max: window.pageXOffset + cRect.top + cRect.height,
+        }
+      }
+
+
+    },
+
 };
 
 // preview element
