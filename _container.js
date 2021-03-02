@@ -177,10 +177,6 @@ const ContainerMixin = {
       eventManager.addListeners(this.listenerNode, {move: this.handleSortMove});
       eventManager.addListeners(this.listenerNode, {end: this.handleSortEnd});
 
-
-      // this.sorting = true;
-      // this.sortingIndex = index;
-
       // [Note]: this is apparently to provide easy customization
       // of what should happen on DnD events
       // this.$emit('sort-start', {event: e, node});
@@ -295,11 +291,6 @@ const ContainerMixin = {
             this.isAutoScrolling = true;
             this.manager.scroll.container.scrollTop += scrollRequest.y;
             this.manager.scroll.container.scrollLeft += scrollRequest.x;
-
-
-            // Why do we translate a helper with scroll offset?
-            // this.translate.x += scrollRequest.left;
-            // this.translate.y += scrollRequest.top;
 
             // this.animateNodes();
             // node.style[`${vendorPrefix}Transform`] = `translate3d(${translate.x}px,${translate.y}px,0)`;
