@@ -72,10 +72,10 @@ function getOffset(e) {
 }
 
 function arrayMoveElement(from, to){
-  
+
   // if (from.array.includes(to.array[to.index]) && from.index<to.index){
   // if (from.array.includes(to.array[to.index],from.index)){
-  if (from.array==to.array && from.index<to.index){
+  if (from.array===to.array && from.index<to.index){
     to.index -= 1;
   }
 
@@ -96,7 +96,7 @@ const vendorPrefix = (function() {
   // in this case return an array with a fake mozilla style in it.
   const styles = window.getComputedStyle(document.documentElement, '') || ['-moz-hidden-iframe'];
   const pre = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o']))[1];
-  
+
   switch (pre) {
     case 'ms':
     return 'ms';
