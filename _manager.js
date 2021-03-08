@@ -13,6 +13,8 @@ const manager = {
         },
     },
 
+    intervals: {},
+
 
     init(){
       this.cache = {};          // to cache something within a DnD action
@@ -26,7 +28,12 @@ const manager = {
 
       this.scroll = {
         edges: {x: {}, y: {}},   // container edges (document coordinates)
-        windowEdges: {},        // window edges (viewport coordinates)
+
+        window: document.scrollingElement,
+        windowEdges: {
+          x: {min: 20, max: window.innerWidth-20},
+          y: {min: 20, max: window.innerHeight-20},
+        },        // window edges (viewport coordinates)
       };
 
 

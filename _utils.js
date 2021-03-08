@@ -84,6 +84,13 @@ function arrayMoveElement(from, to){
 }
 
 
+function calcScroll(pos, edges){
+
+  if (pos > edges.max) return pos - edges.max;     // Scroll down/right
+  if (pos < edges.min) return pos - edges.min;    // Scroll up/left
+
+  return 0;     // no scroll
+}
 
 
 
