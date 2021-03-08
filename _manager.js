@@ -23,6 +23,8 @@ const manager = {
       this.hovered = null;      // Draggable compo that is hovered
       this.container = null;    // Container compo (parent of this.hovered)
 
+      this.helperRect = null;   // getBoundingClientRect of helper element
+
       this.oldLocation = null;  // {array, index} where the draggable item taken
       this.newLocation = null;  // {array, index} where the draggable item dropped
 
@@ -62,14 +64,72 @@ const manager = {
           max: window.pageXOffset + cRect.top + cRect.height,
         }
       }
+    },
 
+    stopAutoscroll(){
+      if (this.intervals.container) {
+        clearInterval(this.intervals.container);
+        this.intervals.container = null;
+      }
+      if (this.intervals.window) {
+        clearInterval(this.intervals.window);
+        this.intervals.window = null;
+      }
+    },
+
+    startAutoscroll(key, translation, timeout=5){
+      // key is 'container' or 'window'
+
+      if (translation.y || translation.x)
+        this.intervals[key] = setInterval(() => {
+            this.scroll[key].scrollTop += translation.y;
+            this.scroll[key].scrollLeft += translation.x;
+          },
+          timeout
+        );
+
+    },
+
+    autoscroll(e) {
+
+      if (!this.dragging)
+        return;
+
+      const pointer = {
+        docX: e.pageX,
+        docY: e.pageY,
+        x: e.clientX,
+        y: e.clientY,
+      };
+      const acceleration = {x: 10, y: 10};
+      const scroll_c = {};
+      const scroll_w = {};
+
+      // const {height,width} = this.container.boundingClientRect;
+      const {height,width} = this.helperRect;
+
+      // Container scroll
+      scroll_c.x = acceleration.x * calcScroll(pointer.docX, this.scroll.edges.x) / width;
+      scroll_c.y = acceleration.y * calcScroll(pointer.docY, this.scroll.edges.y) / height;
+
+      // Window scroll
+      scroll_w.x = acceleration.x * calcScroll(pointer.x, this.scroll.windowEdges.x) / width;
+      scroll_w.y = acceleration.y * calcScroll(pointer.y, this.scroll.windowEdges.y) / height;
+
+      // console.log("[autoscroll] helper.height: ", height);
+      // console.log("[autoscroll] pointer: ", pointer);
+
+      this.stopAutoscroll();
+
+      this.startAutoscroll('container', scroll_c);
+      this.startAutoscroll('window', scroll_w);
 
     },
 
 };
 
 // preview element
-document.getElementsByTagName("body")[0].innerHTML += `
+document.body.innerHTML += `
   <div id="${manager.previewNode.parentId}" hidden>
     <div id="${manager.previewNode.id}">
     </div>

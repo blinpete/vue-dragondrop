@@ -93,7 +93,7 @@ const ContainerMixin = {
       this.onDrop(e,this.manager.oldLocation, this.manager.newLocation);
 
       // to clear autoscroll
-      this.stopAutoscroll();
+      this.manager.stopAutoscroll();
 
       // this.manager.container.$forceUpdate();
       if (this.hideSortableGhost) {
@@ -145,7 +145,7 @@ const ContainerMixin = {
       Object.assign(helper.style, measures);
 
       // it must go before hideSortableGhost
-      this.boundingClientRect = node.getBoundingClientRect();
+      this.manager.helperRect = node.getBoundingClientRect();
 
 
       if (this.hideSortableGhost) {
@@ -212,7 +212,7 @@ const ContainerMixin = {
       }
 
       // this.animateNodes();
-      this.autoscroll(e);
+      this.manager.autoscroll(e);
 
       // this.$emit('sort-move', { event: e });
     },
@@ -233,78 +233,6 @@ const ContainerMixin = {
       this.manager.helper.style[
         `${vendorPrefix}Transform`
       ] = `translate3d(${translate.x}px,${translate.y}px, 0)`;
-    },
-
-    stopAutoscroll(){
-      if (this.manager.intervals.container) {
-        clearInterval(this.manager.intervals.container);
-        this.manager.intervals.container = null;
-      }
-      if (this.manager.intervals.window) {
-        clearInterval(this.manager.intervals.window);
-        this.manager.intervals.window = null;
-      }
-    },
-
-    autoscroll(e) {
-
-      if (!this.manager.dragging)
-        return;
-
-      const pointer = {
-        docX: e.pageX,
-        docY: e.pageY,
-        x: e.clientX,
-        y: e.clientY,
-      };
-      const acceleration = {x: 10, y: 10};
-      const scrollRequest = {};
-      const scrollRequestWindow = {};
-
-      const {height,width} = this.boundingClientRect;
-
-      // Container scroll
-      scrollRequest.x = acceleration.x * calcScroll(pointer.docX, this.manager.scroll.edges.x) / width;
-      scrollRequest.y = acceleration.y * calcScroll(pointer.docY, this.manager.scroll.edges.y) / height;
-
-      // Window scroll
-      scrollRequestWindow.x = acceleration.x * calcScroll(pointer.x, this.manager.scroll.windowEdges.x) / width;
-      scrollRequestWindow.y = acceleration.y * calcScroll(pointer.y, this.manager.scroll.windowEdges.y) / height;
-
-
-      // console.log("[autoscroll] helper.height: ", height);
-      // console.log("[autoscroll] pointer: ", pointer);
-      // console.log("[autoscroll] scroll windowEdges: ", this.manager.scroll.windowEdges);
-      // console.log("[autoscroll] scrollRequestWindow: ", scrollRequestWindow);
-
-
-      this.stopAutoscroll();
-
-      if (scrollRequest.y || scrollRequest.x) {
-        this.manager.intervals.container = setInterval(
-          () => {
-            this.manager.scroll.container.scrollTop += scrollRequest.y;
-            this.manager.scroll.container.scrollLeft += scrollRequest.x;
-
-            // this.animateNodes();
-            // node.style[`${vendorPrefix}Transform`] = `translate3d(${translate.x}px,${translate.y}px,0)`;
-          },
-          5
-        );
-      }
-
-      // move autoscroll( ) to manager.js
-
-      if (scrollRequestWindow.y || scrollRequestWindow.x) {
-        this.manager.intervals.window = setInterval(
-          () => {
-            this.manager.scroll.window.scrollTop += scrollRequestWindow.y;
-            this.manager.scroll.window.scrollLeft += scrollRequestWindow.x;
-          },
-          5
-        );
-      }
-
     },
 
   },
