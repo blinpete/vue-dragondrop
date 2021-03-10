@@ -63,8 +63,8 @@ const manager = {
       if (c.axis.includes('y'))
         // there must be pageYOffset, not X !
         this.scroll.edges.y = {
-          min: window.pageXOffset + cRect.top,
-          max: window.pageXOffset + cRect.top + cRect.height,
+          min: window.pageYOffset + cRect.top,
+          max: window.pageYOffset + cRect.top + cRect.height,
         }
 
       this.updatePreviewNode();
@@ -78,8 +78,8 @@ const manager = {
         const pWidth = this.hovered.$el.offsetWidth || getCSSPixelValue(hs.width);
         const hArea = getCSSPixelValue(hs.width)*getCSSPixelValue(hs.height);
 
-        console.log('[updatePreview] hovered: ', this.hovered.$el);
-        console.log('[updatePreview] pWidth: ', pWidth);
+        // console.log('[updatePreview] hovered: ', this.hovered.$el);
+        // console.log('[updatePreview] pWidth: ', pWidth);
 
         preview.style.height = hArea/pWidth + 'px';
 
