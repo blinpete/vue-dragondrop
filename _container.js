@@ -183,6 +183,9 @@ const ContainerMixin = {
       // this.$emit('sort-start', {event: e, node});
       // this.$emit('sort-start', {event: e, node, index, collection});
 
+      this.handleSortMove(e);   // to get a preview node at once
+
+
     },
 
     handleSortMove(e) {
@@ -217,9 +220,11 @@ const ContainerMixin = {
       // this.$emit('sort-move', { event: e });
     },
 
-    updatePosition(e){
+    updatePosition(e, isClient=true){
 
-      const offset = getOffset(e);
+      // const offset = getOffset(e);
+      const offset = isClient ? {x: e.clientX, y: e.clientY} : getOffset(e);
+
       const translate = {
         x: offset.x - this.initialOffset.x,
         y: offset.y - this.initialOffset.y,

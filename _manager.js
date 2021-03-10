@@ -29,6 +29,7 @@ const manager = {
       this.newLocation = null;  // {array, index} where the draggable item dropped
 
       this.scroll = {
+        container: null,
         edges: {x: {}, y: {}},   // container edges (document coordinates)
 
         window: document.scrollingElement,
