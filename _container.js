@@ -183,6 +183,7 @@ const ContainerMixin = {
       // this.$emit('sort-start', {event: e, node});
       // this.$emit('sort-start', {event: e, node, index, collection});
 
+      this.manager.updatePreviewNode();
       this.handleSortMove(e);   // to get a preview node at once
 
 

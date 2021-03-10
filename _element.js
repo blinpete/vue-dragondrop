@@ -42,32 +42,10 @@ const ElementMixin = {
           return;
         }
 
-        const hs = this.manager.helper.style;
-        const preview = this.manager.previewNode.node;
-
-
-        // --------------------------- preview styling -----------
-        const pWidth = this.$el.offsetWidth;
-        const hArea = getCSSPixelValue(hs.width)*getCSSPixelValue(hs.height);
-        preview.style.height = hArea/pWidth + 'px';
-
-        // TODO: resizing a helper on the fly
-        // commented for now cause it requires translating a helper to keep it under a cursor
-        // hs.width = pWidth+'px';
-        // preview.style.height  = hs.height;
-
-        preview.style.width  = pWidth+'px';
-        // -------------------------------------------------------
-
       }
 
-      // this.manager.hovered = {node: this.$el, index: this.index};
       this.manager.hovered = this;
-
       this.manager.updateContainer(this.$parent);
-      // this.manager.container = this.$parent;
-      // this.manager.setScrollContainer();
-
     },
   },
 };

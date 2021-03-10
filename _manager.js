@@ -23,6 +23,7 @@ const manager = {
       this.hovered = null;      // Draggable compo that is hovered
       this.container = null;    // Container compo (parent of this.hovered)
 
+      this.helper = null;       // node (set up in container.handlePress, i.e. on 'start' event)
       this.helperRect = null;   // getBoundingClientRect of helper element
 
       this.oldLocation = null;  // {array, index} where the draggable item taken
@@ -45,6 +46,7 @@ const manager = {
 
 
     updateContainer(c){
+      // console.log('[updateContainer]');
       if(this.container === c) return;
 
       this.container = c;
@@ -52,18 +54,41 @@ const manager = {
 
       const cRect = c.$el.getBoundingClientRect();
 
-      if (c.axis.includes('x')) {
+      if (c.axis.includes('x'))
         this.scroll.edges.x = {
           min: window.pageXOffset + cRect.left,
           max: window.pageXOffset + cRect.left + cRect.width,
         }
-      }
 
-      if (c.axis.includes('y')) {
+      if (c.axis.includes('y'))
+        // there must be pageYOffset, not X !
         this.scroll.edges.y = {
           min: window.pageXOffset + cRect.top,
           max: window.pageXOffset + cRect.top + cRect.height,
         }
+
+      this.updatePreviewNode();
+    },
+
+    updatePreviewNode(){
+      if (this.helper) {
+        const hs = this.helper.style;
+        const preview = this.previewNode.node;
+
+        const pWidth = this.hovered.$el.offsetWidth || getCSSPixelValue(hs.width);
+        const hArea = getCSSPixelValue(hs.width)*getCSSPixelValue(hs.height);
+
+        console.log('[updatePreview] hovered: ', this.hovered.$el);
+        console.log('[updatePreview] pWidth: ', pWidth);
+
+        preview.style.height = hArea/pWidth + 'px';
+
+        // TODO: resizing a helper on the fly
+        // commented for now cause it requires translating a helper to keep it under a cursor
+        // hs.width = pWidth+'px';
+        // preview.style.height  = hs.height;
+
+        preview.style.width  = pWidth+'px';
       }
     },
 
