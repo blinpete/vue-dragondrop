@@ -132,6 +132,9 @@ const ContainerMixin = {
       // this.offsetEdge = this.getEdgeOffset(node);
       this.initialOffset = getOffset(e);
 
+      const {scrollTop,scrollLeft} = this.manager.scroll.window;
+      this.initialOffset.x -= scrollLeft;
+      this.initialOffset.y -= scrollTop;
 
       // ------------------------------------------ helper --------------
       const measures = getElementMeasures(node);
@@ -221,10 +224,10 @@ const ContainerMixin = {
       // this.$emit('sort-move', { event: e });
     },
 
-    updatePosition(e, isClient=true){
+    updatePosition(e){
 
       // const offset = getOffset(e);
-      const offset = isClient ? {x: e.clientX, y: e.clientY} : getOffset(e);
+      const offset = {x: e.clientX, y: e.clientY};
 
       const translate = {
         x: offset.x - this.initialOffset.x,
