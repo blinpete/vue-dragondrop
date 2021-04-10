@@ -31,17 +31,15 @@ const manager = {
 
       this.scroll = {
         container: null,
-        edges: {x: {}, y: {}},   // container edges (document coordinates)
+        edges: {x: {}, y: {}},  // container edges (document coordinates)
 
         window: document.scrollingElement,
         windowEdges: {
           x: {min: 20, max: window.innerWidth-20},
           y: {min: 20, max: window.innerHeight-20},
-        },        // window edges (viewport coordinates)
+        },                      // window edges (viewport coordinates)
       };
 
-
-      // this.useWindowAsScrollContainer = false;
     },
 
 
@@ -61,7 +59,6 @@ const manager = {
         }
 
       if (c.axis.includes('y'))
-        // there must be pageYOffset, not X !
         this.scroll.edges.y = {
           min: window.pageYOffset + cRect.top,
           max: window.pageYOffset + cRect.top + cRect.height,
@@ -92,17 +89,6 @@ const manager = {
       }
     },
 
-    stopAutoscroll(){
-      if (this.intervals.container) {
-        clearInterval(this.intervals.container);
-        this.intervals.container = null;
-      }
-      if (this.intervals.window) {
-        clearInterval(this.intervals.window);
-        this.intervals.window = null;
-      }
-    },
-
     startAutoscroll(key, translation, timeout=5){
       // key is 'container' or 'window'
 
@@ -113,7 +99,15 @@ const manager = {
           },
           timeout
         );
+    },
 
+    stopAutoscroll(){
+      ['container', 'window'].forEach(k => {
+        if (this.intervals[k]) {
+          clearInterval(this.intervals[k]);
+          this.intervals[k] = null;
+        }
+      });
     },
 
     autoscroll(e) {
@@ -128,28 +122,25 @@ const manager = {
         y: e.clientY,
       };
       const acceleration = {x: 10, y: 10};
-      const scroll_c = {};
-      const scroll_w = {};
+      const {height,width} = this.helperRect;  // there was = this.container.boundingClientRect;
 
-      // const {height,width} = this.container.boundingClientRect;
-      const {height,width} = this.helperRect;
 
       // Container scroll
-      scroll_c.x = acceleration.x * calcScroll(pointer.docX, this.scroll.edges.x) / width;
-      scroll_c.y = acceleration.y * calcScroll(pointer.docY, this.scroll.edges.y) / height;
+      const scroll_c = {
+        x: acceleration.x * calcScroll(pointer.docX, this.scroll.edges.x) / width,
+        y: acceleration.y * calcScroll(pointer.docY, this.scroll.edges.y) / height
+      };
 
       // Window scroll
-      scroll_w.x = acceleration.x * calcScroll(pointer.x, this.scroll.windowEdges.x) / width;
-      scroll_w.y = acceleration.y * calcScroll(pointer.y, this.scroll.windowEdges.y) / height;
+      const scroll_w = {
+        x: acceleration.x * calcScroll(pointer.x, this.scroll.windowEdges.x) / width,
+        y: acceleration.y * calcScroll(pointer.y, this.scroll.windowEdges.y) / height
+      };
 
-      // console.log("[autoscroll] helper.height: ", height);
-      // console.log("[autoscroll] pointer: ", pointer);
-
-      this.stopAutoscroll();
+      this.stopAutoscroll();    // clear the old scroll
 
       this.startAutoscroll('container', scroll_c);
       this.startAutoscroll('window', scroll_w);
-
     },
 
 };
