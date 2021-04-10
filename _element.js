@@ -3,7 +3,6 @@
 
 
 const ElementMixin = {
-  // inject: ['manager'],
   props: {
     index: Number,
     item: Object,
@@ -34,7 +33,6 @@ const ElementMixin = {
     },
     onHover(e){
       console.log("[onHover] item.id: ", this.item.id);
-      // console.log("[onHover] item.id: ", this.$props);
 
       if (this.manager.dragging) {
         if (this.$parent.groupName !== this.manager.groupName) {
