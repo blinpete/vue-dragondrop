@@ -11,7 +11,7 @@ html {
 #app {
     background-color: rgb(176, 187, 196);
     width: 800px;
-    margin: 100px auto;
+    margin: 50px auto;
     padding: 30px 40px;
     border-radius: 5px;
 }
@@ -80,7 +80,7 @@ hr {
 ::-webkit-scrollbar-thumb {
     background-color: rgb(186, 187, 190);
     border-radius: 4px;
-    
+
     border: 2px solid transparent;
     background-clip: padding-box;
 
