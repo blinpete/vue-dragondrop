@@ -107,16 +107,13 @@ const ContainerMixin = {
     handlePress(e){
 
       if (!this.manager.hovered) {
-        // it is a scroll
-        // or click outside an item
+        // it is a scroll click or click outside an item
         return;
       }
 
       this.manager.dragging = this.manager.hovered;
       this.manager.oldLocation = {array: this.list, index: this.manager.hovered.index};
       this.manager.newLocation = Object.assign({},this.manager.oldLocation);
-
-      // this.manager.setScrollContainer();
 
 
       const node = this.manager.dragging.$el;
@@ -143,7 +140,7 @@ const ContainerMixin = {
       helper.style.position = 'fixed';
       helper.style.boxSizing = 'border-box';
       helper.style.pointerEvents = 'none';
-      // helper.style.zIndex = 100;
+      helper.style.zIndex = 100;
 
       Object.assign(helper.style, measures);
 
@@ -164,17 +161,6 @@ const ContainerMixin = {
       }
       this.manager.helper = helper;
       // ----------------------------------------------------------------
-
-
-      // ----------------------------- scroll --------------------------------
-      this._axis = {
-        x: axis.indexOf('x') >= 0,
-        y: axis.indexOf('y') >= 0,
-      };
-      // moved to _manager.js
-      // --------------------------------------------------------------------
-
-
 
 
       this.listenerNode = e.touches ? node : this._window;
