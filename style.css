@@ -9,11 +9,12 @@ html {
 }
 
 #app {
-    background-color: rgb(176, 187, 196);
+    background-color: #6e779894;
     width: 800px;
     margin: 50px auto;
     padding: 30px 40px;
     border-radius: 5px;
+    box-shadow: 0 0 2px #a1a1a1;
 }
 
 h1 {
