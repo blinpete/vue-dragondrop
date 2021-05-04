@@ -1,16 +1,16 @@
 
 const manager = {
 
-    previewNode: {
-        parentId: "__preview_hidden__",
-        id: "__preview_node__",
-        style: {
-            width: '200px',
-            height: '80px',
-            border: '2px dashed #abc',
-            boxSizing: 'border-box',
-            margin: '3px 0',
-        },
+    ghost: {
+      node: null,
+      styleCache: {},
+      style: {
+          width: '200px',
+          height: '80px',
+          border: '2px dashed #abc',
+          boxSizing: 'border-box',
+          margin: '3px 0',
+      },
     },
 
     intervals: {},
@@ -64,29 +64,25 @@ const manager = {
           max: window.pageYOffset + cRect.top + cRect.height,
         }
 
-      this.updatePreviewNode();
     },
 
-    updatePreviewNode(){
-      if (this.helper) {
-        const hs = this.helper.style;
-        const preview = this.previewNode.node;
+    setGhost(node){
+      this.ghost.node = node;
+    },
 
-        const pWidth = this.hovered.$el.offsetWidth || getCSSPixelValue(hs.width);
-        const hArea = getCSSPixelValue(hs.width)*getCSSPixelValue(hs.height);
+    hideGhost(){
+      let node = this.ghost.node;
+      if (!node) return;
 
-        // console.log('[updatePreview] hovered: ', this.hovered.$el);
-        // console.log('[updatePreview] pWidth: ', pWidth);
+      this.ghost.styleCache.visibility = node.style.visibility;
+      this.ghost.styleCache.opacity    = node.style.opacity;
 
-        preview.style.height = hArea/pWidth + 'px';
+      node.style.visibility = 'hidden';
+      node.style.opacity    = 0;
+    },
 
-        // TODO: resizing a helper on the fly
-        // commented for now cause it requires translating a helper to keep it under a cursor
-        // hs.width = pWidth+'px';
-        // preview.style.height  = hs.height;
-
-        preview.style.width  = pWidth+'px';
-      }
+    revealGhost(){
+      Object.assign(this.ghost.node.style, this.ghost.styleCache);
     },
 
     startAutoscroll(key, translation, timeout=5){
@@ -144,21 +140,6 @@ const manager = {
     },
 
 };
-
-// preview element
-document.body.innerHTML += `
-  <div id="${manager.previewNode.parentId}" hidden>
-    <div id="${manager.previewNode.id}">
-    </div>
-  </div>
-`;
-
-manager.previewNode.parentNode = document.getElementById(manager.previewNode.parentId);
-manager.previewNode.node = document.getElementById(manager.previewNode.id);
-
-Object.entries(manager.previewNode.style).forEach(([k,v]) => {
-    manager.previewNode.node.style[k] = v;
-});
 
 
 manager.init();

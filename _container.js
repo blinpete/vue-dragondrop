@@ -84,21 +84,18 @@ const ContainerMixin = {
       // Remove the helper from the DOM
       this.manager.helper.parentNode.removeChild(this.manager.helper);
 
-      // Move the preview node to hidden div
-      this.manager.previewNode.parentNode.appendChild(this.manager.previewNode.node);
-
 
       console.log("oldLocation: ", this.manager.oldLocation);
       console.log("newLocation: ", this.manager.newLocation);
+
       this.onDrop(e,this.manager.oldLocation, this.manager.newLocation);
 
       // to clear autoscroll
       this.manager.stopAutoscroll();
 
-      // this.manager.container.$forceUpdate();
-      if (this.hideSortableGhost) {
-        this.manager.dragging.$el.style.display=this.manager.cache.display;
-      }
+      // ghost
+      this.hideSortableGhost && this.manager.revealGhost();
+
 
       this.manager.init();
     },
@@ -148,13 +145,8 @@ const ContainerMixin = {
       this.manager.helperRect = node.getBoundingClientRect();
 
 
-      if (this.hideSortableGhost) {
-        // this.sortableGhost = node;
-        // node.style.visibility = 'hidden';
-        // node.style.opacity = 0;
-        this.manager.cache.display = node.style.display;
-        node.style.display = "none";
-      }
+      this.manager.setGhost(node);
+      this.hideSortableGhost && this.manager.hideGhost();
 
       if (helperClass) {
         helper.classList.add(...this.helperClass.split(' '));
@@ -167,15 +159,12 @@ const ContainerMixin = {
       eventManager.addListeners(this.listenerNode, {move: this.handleSortMove});
       eventManager.addListeners(this.listenerNode, {end: this.handleSortEnd});
 
-      // [Note]: this is apparently to provide easy customization
+      // [Note]: this is to provide easy customization
       // of what should happen on DnD events
       // this.$emit('sort-start', {event: e, node});
       // this.$emit('sort-start', {event: e, node, index, collection});
 
-      this.manager.updatePreviewNode();
       this.handleSortMove(e);   // to get a preview node at once
-
-
     },
 
     handleSortMove(e) {
@@ -186,20 +175,20 @@ const ContainerMixin = {
       this.updatePosition(e);
 
       if (this.manager.hovered) {
-        const preview = this.manager.previewNode.node;
+        const ghost = this.manager.ghost.node;
 
+        // TODO: make it track X or Y center depending on container.direction
         const hoveredCenterY = getElementCenter(this.manager.hovered.$el, 'y').y;
         const helperCenterY = getElementCenter(this.manager.helper, 'y').y;
+
         if (helperCenterY < hoveredCenterY) {
           console.log("[handleSortMove] upper half hovered");
-          // console.log({pos: pos.y, center: hoveredRect.centerY});
-
-          this.manager.container.$el.insertBefore(preview, this.manager.hovered.$el);
+          this.manager.container.$el.insertBefore(ghost, this.manager.hovered.$el);
           this.manager.newLocation = {array: this.manager.container.list, index: this.manager.hovered.index};
         }
         else {
           console.log("[handleSortMove] lower half hovered");
-          this.manager.container.$el.insertBefore(preview, this.manager.hovered.$el.nextSibling);
+          this.manager.container.$el.insertBefore(ghost, this.manager.hovered.$el.nextSibling);
           this.manager.newLocation = {array: this.manager.container.list, index: this.manager.hovered.index+1};
         }
       }
@@ -225,9 +214,7 @@ const ContainerMixin = {
 
       this.translate = translate;
 
-      this.manager.helper.style[
-        `${vendorPrefix}Transform`
-      ] = `translate3d(${translate.x}px,${translate.y}px, 0)`;
+      this.manager.helper.style[`${vendorPrefix}Transform`] = `translate3d(${translate.x}px,${translate.y}px, 0)`;
     },
 
   },
