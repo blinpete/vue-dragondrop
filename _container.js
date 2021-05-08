@@ -81,29 +81,37 @@ const ContainerMixin = {
         eventManager.removeListeners(this.listenerNode, {end: this.handleSortEnd})
       }
 
-      // Remove the helper from the DOM
-      this.manager.helper.parentNode.removeChild(this.manager.helper);
-
 
       console.log("oldLocation: ", this.manager.oldLocation);
       console.log("newLocation: ", this.manager.newLocation);
 
-      this.onDrop(e,this.manager.oldLocation, this.manager.newLocation);
 
       // to clear autoscroll
       this.manager.stopAutoscroll();
 
-      // ghost
-      this.hideSortableGhost && this.manager.revealGhost();
 
 
-      this.manager.init();
+      this.manager.moveHelperToGhost();
+
+      setTimeout(()=>{
+        this.onDrop(e,this.manager.oldLocation, this.manager.newLocation);
+
+        // ghost
+        this.hideSortableGhost && this.manager.revealGhost();
+
+        this.manager.init();
+      }, 200);
+
     },
 
 
     handlePress(e){
 
+      console.log('[handlePress]');
+
       if (!this.manager.hovered) {
+        console.log('[handlePress] wrong click');
+
         // it is a scroll click or click outside an item
         return;
       }
@@ -124,11 +132,8 @@ const ContainerMixin = {
       } = this.$props;
 
       // this.offsetEdge = this.getEdgeOffset(node);
-      this.initialOffset = getOffset(e);
+      this.manager.setInitialOffset(e);
 
-      const {scrollTop,scrollLeft} = this.manager.scroll.window;
-      this.initialOffset.x -= scrollLeft;
-      this.initialOffset.y -= scrollTop;
 
       // ------------------------------------------ helper --------------
       const measures = getElementMeasures(node);
@@ -143,7 +148,6 @@ const ContainerMixin = {
 
       // it must go before hideSortableGhost
       this.manager.helperRect = node.getBoundingClientRect();
-
 
       this.manager.setGhost(node);
       this.hideSortableGhost && this.manager.hideGhost();
@@ -205,8 +209,8 @@ const ContainerMixin = {
       const offset = {x: e.clientX, y: e.clientY};
 
       const translate = {
-        x: offset.x - this.initialOffset.x,
-        y: offset.y - this.initialOffset.y,
+        x: offset.x - this.manager.initialOffset.x,
+        y: offset.y - this.manager.initialOffset.y,
       };
 
       // console.log("[updatePos] offset: ", offset);

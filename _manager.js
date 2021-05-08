@@ -85,6 +85,70 @@ const manager = {
       Object.assign(this.ghost.node.style, this.ghost.styleCache);
     },
 
+    setInitialOffset(e){
+      this.initialOffset = getOffset(e);
+
+      this.initialOffset.x -= this.scroll.window.scrollLeft;
+      this.initialOffset.y -= this.scroll.window.scrollTop;
+    },
+
+    moveHelperToGhost(){
+
+      console.log('[moveHeplerToGhost]');
+
+      let duration = 250;
+      let targetX = 0;
+      let targetY = 0;
+
+      let scroll = {
+        left: this.scroll.container.scrollLeft,
+        top: this.scroll.container.scrollTop,
+      };
+
+      let ghost = {
+        left: this.ghost.node.offsetLeft,
+        top: this.ghost.node.offsetTop,
+        width: this.ghost.node.offsetWidth,
+        height: this.ghost.node.offsetHeight,
+      };
+
+      let helper = {
+        left: this.helper.offsetLeft,
+        top: this.helper.offsetTop,
+        width: this.helper.offsetWidth,
+        height: this.helper.offsetHeight,
+      };
+
+      // console.log('scroll: ', scroll.left);
+      // console.log('ghost: ', ghost.left);
+      // console.log('helper: ', helper.left);
+
+
+      targetX = -scroll.left + ghost.left - helper.left;
+      targetY = -scroll.top + ghost.top - helper.top;
+
+
+
+      this.helper.style[`${vendorPrefix}Transform`] = `translate3d(${targetX}px,${targetY}px, 0)`;
+      this.helper.style[`${vendorPrefix}TransitionDuration`] = `${duration}ms`;
+
+
+      // Remove the helper from the DOM ---------------------------------------
+      _helper = this.helper;
+
+      setTimeout((e)=>{
+        console.log('[moveHelperToGhost] removing helper');
+        _helper.parentNode.removeChild(_helper);
+      }, duration);
+
+      // it won't work in case when there was no animation (quick single click)
+      // _helper.addEventListener('transitionend', (e)=>{
+      //   console.log('[moveHelperToGhost] removing helper');
+      //   _helper.parentNode.removeChild(_helper);
+      // }, false);
+      // ----------------------------------------------------------------------
+    },
+
     startAutoscroll(key, translation, timeout=5){
       // key is 'container' or 'window'
 
