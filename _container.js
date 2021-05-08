@@ -93,13 +93,19 @@ const ContainerMixin = {
 
       this.manager.moveHelperToGhost();
 
+      // save Locations in this closure
+      const {oldLocation, newLocation} = this.manager;
+
+      // it kills old/new Locations, dragging, hovered and all the stuff we don't need anymore..
+      // but it keeps ghost, so we can call init() before revealGhost()
+      // Note: cannot call init() from inside setTimeout() for it overwrites 'hovered' field with null
+      this.manager.init();
+
       setTimeout(()=>{
-        this.onDrop(e,this.manager.oldLocation, this.manager.newLocation);
+        this.onDrop(e, oldLocation, newLocation);
 
         // ghost
         this.hideSortableGhost && this.manager.revealGhost();
-
-        this.manager.init();
       }, 200);
 
     },
