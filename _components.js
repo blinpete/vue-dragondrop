@@ -12,6 +12,6 @@ Vue.component("Container",{
 Vue.component("Draggable",{
     mixins: [ElementMixin],
     render(h){
-        return h('li', {class: ["item"]}, this.$slots.default);
+        return h('li', {class: ["item", "unselectable"]}, this.$slots.default);
     },
 });

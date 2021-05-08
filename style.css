@@ -48,6 +48,17 @@ h1 {
     padding: 10px 15px;
     margin: 3px 0 0 0;
     /* border-top: 1px solid rgb(194, 192, 192); */
+
+
+    /* transition: all .3s ; */
+}
+
+*.unselectable {
+    -moz-user-select: none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
 }
 
 .list .item:first-of-type {
