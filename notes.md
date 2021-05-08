@@ -10,11 +10,24 @@
 ## TODOs
 
 - [x] change previewNode implementation using original node with visibility=hidden
-- [ ] test horizontal lists
-
-important
-
-- [ ] test firing custom events
-- [ ] check global variables (vendorPrefix, manager, ...)
 - [x] add onDrop transitions
-- [ ] add on-sort transitions
+
+
+### extra features and fixes
+
+- [ ] add on-sort transitions (its not as easy, maybe its not worth such efforts)
+- [ ] try to simulate behaviour as if the pointer was in the helper's center (it looks better)
+
+
+### important
+
+- [ ] check global variables (vendorPrefix, manager, ...) minimize them to make this project easy-importable
+
+
+### testing
+
+- [ ] test horizontal lists
+- [ ] test firing custom events
+- [ ] test for memory leaks
+
+
