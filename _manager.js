@@ -203,6 +203,44 @@ const manager = {
       this.startAutoscroll('window', scroll_w);
     },
 
+    updatePosition(e){
+
+      // const offset = getOffset(e);                 // page coordinates
+      const offset = {x: e.clientX, y: e.clientY};    // client coordinates
+
+      const translate = {
+        x: offset.x - this.initialOffset.x,
+        y: offset.y - this.initialOffset.y,
+      };
+
+      this.helper.style[`${vendorPrefix}Transform`] = `translate3d(${translate.x}px,${translate.y}px, 0)`;
+    },
+
+    onMove(e){
+      this.updatePosition(e);
+
+      if (this.hovered) {
+        const ghost = this.ghost.node;
+
+        // TODO: make it track X or Y center depending on container.direction
+        const hoveredCenterY = getElementCenter(this.hovered.$el, 'y').y;
+        const helperCenterY = getElementCenter(this.helper, 'y').y;
+
+        if (helperCenterY < hoveredCenterY) {
+          // console.log("[handleSortMove] upper half hovered");
+          this.container.$el.insertBefore(ghost, this.hovered.$el);
+          this.newLocation = {array: this.container.list, index: this.hovered.index};
+        }
+        else {
+          // console.log("[handleSortMove] lower half hovered");
+          this.container.$el.insertBefore(ghost, this.hovered.$el.nextSibling);
+          this.newLocation = {array: this.container.list, index: this.hovered.index+1};
+        }
+      }
+
+      this.autoscroll(e);
+    },
+
 };
 
 

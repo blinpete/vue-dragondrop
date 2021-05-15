@@ -117,7 +117,6 @@ const ContainerMixin = {
 
       if (!this.manager.hovered) {
         console.log('[handlePress] wrong click');
-
         // it is a scroll click or click outside an item
         return;
       }
@@ -179,52 +178,11 @@ const ContainerMixin = {
 
     handleSortMove(e) {
       e.preventDefault(); // Prevent scrolling on mobile
-
       // console.log("[handleSortMove]");
 
-      this.updatePosition(e);
-
-      if (this.manager.hovered) {
-        const ghost = this.manager.ghost.node;
-
-        // TODO: make it track X or Y center depending on container.direction
-        const hoveredCenterY = getElementCenter(this.manager.hovered.$el, 'y').y;
-        const helperCenterY = getElementCenter(this.manager.helper, 'y').y;
-
-        if (helperCenterY < hoveredCenterY) {
-          console.log("[handleSortMove] upper half hovered");
-          this.manager.container.$el.insertBefore(ghost, this.manager.hovered.$el);
-          this.manager.newLocation = {array: this.manager.container.list, index: this.manager.hovered.index};
-        }
-        else {
-          console.log("[handleSortMove] lower half hovered");
-          this.manager.container.$el.insertBefore(ghost, this.manager.hovered.$el.nextSibling);
-          this.manager.newLocation = {array: this.manager.container.list, index: this.manager.hovered.index+1};
-        }
-      }
-
-      // this.animateNodes();
-      this.manager.autoscroll(e);
+      this.manager.onMove(e);
 
       // this.$emit('sort-move', { event: e });
-    },
-
-    updatePosition(e){
-
-      // const offset = getOffset(e);
-      const offset = {x: e.clientX, y: e.clientY};
-
-      const translate = {
-        x: offset.x - this.manager.initialOffset.x,
-        y: offset.y - this.manager.initialOffset.y,
-      };
-
-      // console.log("[updatePos] offset: ", offset);
-      // console.log("[updatePos] translate: ", translate);
-
-      this.translate = translate;
-
-      this.manager.helper.style[`${vendorPrefix}Transform`] = `translate3d(${translate.x}px,${translate.y}px, 0)`;
     },
 
   },
