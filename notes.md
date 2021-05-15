@@ -6,6 +6,22 @@
 - или можно просто завести в _utils.js отдельный объект Manager и его передать в ContainerMixin и ElementMixin. звучит просто и вроде как будет отлично
 
 
+## About card-center-feature
+A card center can be treated as if was a pointer when a card is moving.
+It looks smoother if a card center triggers updateContainer and updateGhost.
+
+But it takes major design changes - onHover/onLeave implementations use mouseenter/mouseleave events,
+they should be replaced with custom events...
+
+smth like
+
+event: "helper-move"
+handlers:
+    Container.handleHelperMove to update container (maybe there is no need in this handler, the next is quite enough)
+    Draggable.onHover with manual checks isPointInside()
+
+
+
 
 ## TODOs
 
