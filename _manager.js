@@ -5,11 +5,8 @@ const manager = {
       node: null,
       styleCache: {},
       style: {
-          width: '200px',
-          height: '80px',
-          border: '2px dashed #abc',
-          boxSizing: 'border-box',
-          margin: '3px 0',
+        visibility: 'hidden',
+        opacity: 0,
       },
     },
 
@@ -71,14 +68,11 @@ const manager = {
     },
 
     hideGhost(){
-      let node = this.ghost.node;
+      let {node, style, styleCache} = this.ghost;
       if (!node) return;
 
-      this.ghost.styleCache.visibility = node.style.visibility;
-      this.ghost.styleCache.opacity    = node.style.opacity;
-
-      node.style.visibility = 'hidden';
-      node.style.opacity    = 0;
+      Object.keys(style).forEach(k => {styleCache[k] = node.style[k]});
+      Object.assign(node.style, style);
     },
 
     revealGhost(){
