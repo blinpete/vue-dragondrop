@@ -7,6 +7,7 @@ const manager = {
       style: {
         visibility: 'hidden',
         opacity: 0,
+        pointerEvents: 'none',  // use this prop if you customized the ghost to be visible
       },
     },
 
