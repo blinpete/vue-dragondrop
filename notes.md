@@ -38,6 +38,8 @@ handlers:
 ### important
 
 - [ ] check global variables (vendorPrefix, manager, ...) minimize them to make this project easy-importable
+- [ ] scroll X only if pointer within Y-bounds of a container and vice versa
+- [ ] don't scroll containers and window simultaneously (window is first)
 
 
 ### testing
