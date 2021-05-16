@@ -16,10 +16,12 @@ const ContainerMixin = {
     lockToContainerEdges:       { type: Boolean, default: false },
     lockOffset:                 { type: [String, Number, Array], default: '50%' },
     transitionDuration:         { type: Number,  default: 300 },
-    appendTo:                   { type: String,  default: 'body' },
+
+    // appendTo:                   { type: String,  default: 'body' },
+    // helperClass: String,
+
     draggedSettlingDuration:    { type: Number,  default: null },
     lockAxis: String,
-    helperClass: String,
     contentWindow: Object,
     shouldCancelStart: {
       type: Function,
@@ -81,30 +83,21 @@ const ContainerMixin = {
         eventManager.removeListeners(this.listenerNode, {end: this.handleSortEnd})
       }
 
-
-      console.log("oldLocation: ", this.manager.oldLocation);
-      console.log("newLocation: ", this.manager.newLocation);
-
-
       // to clear autoscroll
       this.manager.stopAutoscroll();
-
-
 
       this.manager.moveHelperToGhost();
 
       // save Locations in this closure
       const {oldLocation, newLocation} = this.manager;
 
-      // it kills old/new Locations, dragging, hovered and all the stuff we don't need anymore..
+      // it kills old/new Locations, dragging, hovered and all the stuff we don't need any longer..
       // but it keeps ghost, so we can call init() before revealGhost()
       // Note: cannot call init() from inside setTimeout() for it overwrites 'hovered' field with null
       this.manager.init();
 
       setTimeout(()=>{
         this.onDrop(e, oldLocation, newLocation);
-
-        // ghost
         this.hideSortableGhost && this.manager.revealGhost();
       }, 200);
 
@@ -126,45 +119,16 @@ const ContainerMixin = {
       this.manager.newLocation = Object.assign({},this.manager.oldLocation);
 
 
-      const node = this.manager.dragging.$el;
-      const clone = node.cloneNode(true);
-
-      const {
-        axis,
-        helperClass,
-        hideSortableGhost,
-        appendTo,
-      } = this.$props;
-
       // this.offsetEdge = this.getEdgeOffset(node);
       this.manager.setInitialOffset(e);
 
+      this.manager.setHelper();
 
-      // ------------------------------------------ helper --------------
-      const measures = getElementMeasures(node);
-
-      const helper = document.querySelector(this.appendTo).appendChild(clone);
-      helper.style.position = 'fixed';
-      helper.style.boxSizing = 'border-box';
-      helper.style.pointerEvents = 'none';
-      helper.style.zIndex = 100;
-
-      Object.assign(helper.style, measures);
-
-      // it must go before hideSortableGhost
-      this.manager.helperRect = node.getBoundingClientRect();
-
-      this.manager.setGhost(node);
+      this.manager.setGhost();
       this.hideSortableGhost && this.manager.hideGhost();
 
-      if (helperClass) {
-        helper.classList.add(...this.helperClass.split(' '));
-      }
-      this.manager.helper = helper;
-      // ----------------------------------------------------------------
 
-
-      this.listenerNode = e.touches ? node : this._window;
+      this.listenerNode = e.touches ? this.manager.helper : this._window;
       eventManager.addListeners(this.listenerNode, {move: this.handleSortMove});
       eventManager.addListeners(this.listenerNode, {end: this.handleSortEnd});
 

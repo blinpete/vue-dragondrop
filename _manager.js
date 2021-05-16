@@ -11,6 +11,11 @@ const manager = {
       },
     },
 
+    // helper: {},
+
+    appendTo: 'body',
+    helperClass: null,
+
     intervals: {},
 
 
@@ -65,7 +70,7 @@ const manager = {
     },
 
     setGhost(node){
-      this.ghost.node = node;
+      this.ghost.node = node || this.dragging.$el;
     },
 
     hideGhost(){
@@ -234,6 +239,29 @@ const manager = {
       }
 
       this.autoscroll(e);
+    },
+
+    setHelper(){
+      const node = this.dragging.$el;
+      const clone = node.cloneNode(true);
+
+      const measures = getElementMeasures(node);
+
+      const helper = document.querySelector(this.appendTo).appendChild(clone);
+      helper.style.position = 'fixed';
+      helper.style.boxSizing = 'border-box';
+      helper.style.pointerEvents = 'none';
+      helper.style.zIndex = 100;
+
+      Object.assign(helper.style, measures);
+
+      // it must go before hideSortableGhost
+      this.helperRect = node.getBoundingClientRect();
+
+      // TODO: helperClass should belong to Container or Manager?
+      if (this.helperClass) helper.classList.add(...this.helperClass.split(' '));
+
+      this.helper = helper;
     },
 
 };
