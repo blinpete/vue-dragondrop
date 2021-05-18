@@ -11,23 +11,32 @@ const manager = {
       },
     },
 
-    // helper: {},
+    helper: {
+      node: null,
+      rect: null,
+      class: null,
+      style: {
+        pointerEvents: 'none',
+        boxSizing: 'border-box',
+        position: 'fixed',
+        zIndex: 100,
+      }
+    },
 
     appendTo: 'body',
-    helperClass: null,
 
     intervals: {},
 
 
     init(){
       this.cache = {};          // to cache something within a DnD action
-      this.dragging = null;     // Draggable compo that is dragging
 
+      this.dragging = null;     // Draggable compo that is dragging
       this.hovered = null;      // Draggable compo that is hovered
       this.container = null;    // Container compo (parent of this.hovered)
 
-      this.helper = null;       // node (set up in container.handlePress, i.e. on 'start' event)
-      this.helperRect = null;   // getBoundingClientRect of helper element
+      this.helper.node = null;  // node (set up in container.handlePress, i.e. on 'start' event)
+      this.helper.rect = null;  // getBoundingClientRect of helper element
 
       this.oldLocation = null;  // {array, index} where the draggable item taken
       this.newLocation = null;  // {array, index} where the draggable item dropped
@@ -113,10 +122,10 @@ const manager = {
       };
 
       let helper = {
-        left: this.helper.offsetLeft,
-        top: this.helper.offsetTop,
-        width: this.helper.offsetWidth,
-        height: this.helper.offsetHeight,
+        left: this.helper.node.offsetLeft,
+        top: this.helper.node.offsetTop,
+        width: this.helper.node.offsetWidth,
+        height: this.helper.node.offsetHeight,
       };
 
       // console.log('scroll: ', scroll.left);
@@ -129,12 +138,12 @@ const manager = {
 
 
 
-      this.helper.style[`${vendorPrefix}Transform`] = `translate3d(${targetX}px,${targetY}px, 0)`;
-      this.helper.style[`${vendorPrefix}TransitionDuration`] = `${duration}ms`;
+      this.helper.node.style[`${vendorPrefix}Transform`] = `translate3d(${targetX}px,${targetY}px, 0)`;
+      this.helper.node.style[`${vendorPrefix}TransitionDuration`] = `${duration}ms`;
 
 
       // Remove the helper from the DOM ---------------------------------------
-      _helper = this.helper;
+      _helper = this.helper.node;
 
       setTimeout((e)=>{
         console.log('[moveHelperToGhost] removing helper');
@@ -182,7 +191,7 @@ const manager = {
         y: e.clientY,
       };
       const acceleration = {x: 10, y: 10};
-      const {height,width} = this.helperRect;  // there was = this.container.boundingClientRect;
+      const {height,width} = this.helper.rect;  // there was = this.container.boundingClientRect;
 
 
       // Container scroll
@@ -213,7 +222,7 @@ const manager = {
         y: offset.y - this.initialOffset.y,
       };
 
-      this.helper.style[`${vendorPrefix}Transform`] = `translate3d(${translate.x}px,${translate.y}px, 0)`;
+      this.helper.node.style[`${vendorPrefix}Transform`] = `translate3d(${translate.x}px,${translate.y}px, 0)`;
     },
 
     onMove(e){
@@ -224,7 +233,7 @@ const manager = {
 
         // TODO: make it track X or Y center depending on container.direction
         const hoveredCenterY = getElementCenter(this.hovered.$el, 'y').y;
-        const helperCenterY = getElementCenter(this.helper, 'y').y;
+        const helperCenterY = getElementCenter(this.helper.node, 'y').y;
 
         if (helperCenterY < hoveredCenterY) {
           // console.log("[handleSortMove] upper half hovered");
@@ -245,23 +254,17 @@ const manager = {
       const node = this.dragging.$el;
       const clone = node.cloneNode(true);
 
+      this.helper.node = document.querySelector(this.appendTo).appendChild(clone);
+
       const measures = getElementMeasures(node);
-
-      const helper = document.querySelector(this.appendTo).appendChild(clone);
-      helper.style.position = 'fixed';
-      helper.style.boxSizing = 'border-box';
-      helper.style.pointerEvents = 'none';
-      helper.style.zIndex = 100;
-
-      Object.assign(helper.style, measures);
+      Object.assign(this.helper.node.style, this.helper.style, measures);
 
       // it must go before hideSortableGhost
-      this.helperRect = node.getBoundingClientRect();
+      this.helper.rect = node.getBoundingClientRect();
 
       // TODO: helperClass should belong to Container or Manager?
-      if (this.helperClass) helper.classList.add(...this.helperClass.split(' '));
-
-      this.helper = helper;
+      if (this.helper.class)
+        this.helper.node.classList.add(...this.helper.class.split(' '));
     },
 
 };

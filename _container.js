@@ -128,7 +128,7 @@ const ContainerMixin = {
       this.hideSortableGhost && this.manager.hideGhost();
 
 
-      this.listenerNode = e.touches ? this.manager.helper : this._window;
+      this.listenerNode = e.touches ? this.manager.helper.node : this._window;
       eventManager.addListeners(this.listenerNode, {move: this.handleSortMove});
       eventManager.addListeners(this.listenerNode, {end: this.handleSortEnd});
 
