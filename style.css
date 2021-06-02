@@ -91,9 +91,7 @@ h1 {
     overflow-y: scroll;
     opacity: .9;
 }
-.list:first-child {
-    width: 250px;
-}
+
 
 .item {
     background-color: #fff;
@@ -124,9 +122,14 @@ h1 {
 }
 
 
+.list:first-child, .info:first-child {
+    width: 250px;
+}
 .info {
     width: 300px;
     color: #4e5357;
+    margin-left: -5px;
+    /* margin-top: 5px; */
 }
 
 
