@@ -1,25 +1,20 @@
 
-## Про State
-
-- Возможно стоит сделать ContainerMixin.data() словарем а не функцией, чтобы он был общий у всех контейнеров. его можно исползовать как общий state-manager. но тогда нужно как-то еще добавлять индивидуальные поля, например поле group должно быть свое для каждого контейнера
-
-- или можно просто завести в _utils.js отдельный объект Manager и его передать в ContainerMixin и ElementMixin. звучит просто и вроде как будет отлично
-
-
-## About card-center-feature
-A card center can be treated as if was a pointer when a card is moving.
-It looks smoother if a card center triggers updateContainer and updateGhost.
+## About `card-center-feature`
+A card center can be treated as if it was a pointer when a card is moving. It looks smoother if a card center triggers `updateContainer` and `updateGhost`.
 
 But it takes major design changes - onHover/onLeave implementations use mouseenter/mouseleave events,
 they should be replaced with custom events...
 
 smth like
 
-event: "helper-move"
+```
+event: "drag-move"
 handlers:
-    Container.handleHelperMove to update container (maybe there is no need in this handler, the next is quite enough)
-    Draggable.onHover with manual checks isPointInside()
+    - Container.handleHelperMove to update container
+    (maybe there is no need in this handler, the next is quite enough)
 
+    - Draggable.onHover with manual checks isPointInside()
+```
 
 
 
@@ -40,6 +35,7 @@ handlers:
 - [ ] check global variables (vendorPrefix, manager, ...) minimize them to make this project easy-importable
 - [ ] scroll X only if pointer within Y-bounds of a container and vice versa
 - [ ] don't scroll containers and window simultaneously (window is first)
+- [ ] add the step `resizeHelper` after `moveHelperToGhost`
 
 
 ### testing
