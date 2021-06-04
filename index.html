@@ -14,13 +14,20 @@
         <h1>VueJS: Drag & drop cards</h1>
         <div class="container">
             <Container v-for="list in lists" :list="list.items">
-                <Draggable v-for="(item,idx) in list.items" class="item" :key="item.id" :index="idx" :item="item">@{item.text}</Draggable>
+                <Draggable
+                    v-for="(item,idx) in list.items" :key="item.id" class="item"
+                    :index="idx" :item="item" :style="item.style"
+                >@{item.text}</Draggable>
             </Container>
         </div>
 
         <!-- <hr> -->
-        <div class="container">
+        <!-- <div class="container">
             <div v-for="list in lists" class="info">list: @{list.id}, items: @{list.items.map(i=> i.id)}</div>
+        </div> -->
+        <div hidden>
+            <div>dragging: @{manager.dragging ? manager.dragging.item.id : 'null'}</div>
+            <div>hovered: @{manager.hovered ? manager.hovered.item.id : 'null'}</div>
         </div>
     </article>
 </body>
