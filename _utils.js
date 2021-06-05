@@ -9,19 +9,13 @@ const eventManager = {
   leave: ['mouseleave'],
 
   addListeners(el, events){
-    for (const key in events) {
-      this[key].forEach(name => {
-        // console.log("[addListeners] adding", name);
-
-        el.addEventListener(name, events[key], false);
-      });
-    }
+    for (const key in events)
+      this[key].forEach(name => el.addEventListener(name, events[key], false));
   },
 
   removeListeners(el, events){
-    for (const key in events) {
+    for (const key in events)
       this[key].forEach(name => el.removeEventListener(name, events[key]));
-    }
   },
 };
 
@@ -73,14 +67,15 @@ function getOffset(e) {
 
 function arrayMoveElement(from, to){
 
-  // if (from.array.includes(to.array[to.index]) && from.index<to.index){
-  // if (from.array.includes(to.array[to.index],from.index)){
+  // Edge case: moving an element forward within its array
+  //    You'll move the element out of the array first,
+  //    that shifts all the next indices by -1.
+  //    So the destination index should be shifted by -1.
   if (from.array===to.array && from.index<to.index){
     to.index -= 1;
   }
 
   to.array.splice(to.index, 0, from.array.splice(from.index,1)[0]);
-
 }
 
 
