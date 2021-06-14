@@ -4,33 +4,33 @@
 
 const ContainerMixin = {
   props: {
-    // value:                      { type: Array,   required: true },
     list:                       { type: Array, required: true },
     axis:                       { type: String,  default: 'y' }, // 'x', 'y', 'xy'
-    distance:                   { type: Number,  default: 0 },
-    pressDelay:                 { type: Number,  default: 0 },
-    pressThreshold:             { type: Number,  default: 5 },
-    useDragHandle:              { type: Boolean, default: false },
-    useWindowAsScrollContainer: { type: Boolean, default: false },
+
     hideSortableGhost:          { type: Boolean, default: true },
-    lockToContainerEdges:       { type: Boolean, default: false },
-    lockOffset:                 { type: [String, Number, Array], default: '50%' },
-    transitionDuration:         { type: Number,  default: 300 },
 
-    // appendTo:                   { type: String,  default: 'body' },
-    // helperClass: String,
+    // distance:                   { type: Number,  default: 0 },
+    // pressDelay:                 { type: Number,  default: 0 },
+    // pressThreshold:             { type: Number,  default: 5 },
 
-    draggedSettlingDuration:    { type: Number,  default: null },
-    lockAxis: String,
-    contentWindow: Object,
-    shouldCancelStart: {
-      type: Function,
-      default: (e) => {
-        // Cancel sorting if the event target is an `input`, `textarea`, `select` or `option`
-        const disabledElements = ['input', 'textarea', 'select', 'option', 'button'];
-        return disabledElements.indexOf(e.target.tagName.toLowerCase()) !== -1;
-      },
-    },
+    // useDragHandle:              { type: Boolean, default: false },
+    // lockToContainerEdges:       { type: Boolean, default: false },
+    // lockOffset:                 { type: [String, Number, Array], default: '50%' },
+    // lockAxis: String,
+
+    // transitionDuration:         { type: Number,  default: 300 },
+    // draggedSettlingDuration:    { type: Number,  default: null },
+
+    // contentWindow: Object,
+    // shouldCancelStart: {
+    //   type: Function,
+    //   default: (e) => {
+    //     // Cancel sorting if the event target is an `input`, `textarea`, `select` or `option`
+    //     const disabledElements = ['input', 'textarea', 'select', 'option', 'button'];
+    //     return disabledElements.indexOf(e.target.tagName.toLowerCase()) !== -1;
+    //   },
+    // },
+
   },
 
   data(){
@@ -136,8 +136,6 @@ const ContainerMixin = {
       // of what should happen on DnD events
       // this.$emit('sort-start', {event: e, node});
       // this.$emit('sort-start', {event: e, node, index, collection});
-
-      this.handleSortMove(e);   // to get a preview node at once
     },
 
     handleSortMove(e) {
