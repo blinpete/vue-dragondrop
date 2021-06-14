@@ -1,12 +1,15 @@
 
+import Vue from 'vue';
+import {vddContainer, vddElement} from './src';
+
+
 const lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
 
 function dummyLists(lengths, mode='text'){
 
     let colors = [
-        '#6d8fa2', // blue
-        '#73a48a', // green
-        '#b07272', // red blood
+        // '#6d8fa2', // blue
+        // '#73a48a', // green
 
         '#5b7f94', // blue
         '#5a9878', // green
@@ -17,6 +20,7 @@ function dummyLists(lengths, mode='text'){
         '#74b176', // green dragon
         '#669fc0', // blue drop
         '#b56b6b', // red blood
+        '#b07272', // red blood 2
     ];
 
     var lists = [];
@@ -24,7 +28,7 @@ function dummyLists(lengths, mode='text'){
         let color = colors[i%colors.length];
 
         lists.push( {id: +i+1, items: []} );
-        for (k in Array(lengths[i]).fill()) {
+        for (let k in Array(lengths[i]).fill()) {
             var id = +k+100*(+i+1);
             var height = 20+parseInt(80*Math.random())+'px';
             var item = {
@@ -52,7 +56,7 @@ function dummyLists(lengths, mode='text'){
     return lists;
 }
 
-const lists = dummyLists([20,15], mode='colors');
+const lists = dummyLists([20,15], 'colors');
 
 
 window.app = new Vue({
@@ -60,7 +64,12 @@ window.app = new Vue({
     delimiters: ["@{", "}"],
     data: {
         lists: lists,
-        manager: manager,
+        // manager: manager,
+    },
+
+    components: {
+        vddContainer,
+        vddElement
     },
 
     mounted(){
