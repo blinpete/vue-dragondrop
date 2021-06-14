@@ -26,13 +26,12 @@ handlers:
 
 ### extra features and fixes
 
-- [ ] add on-sort transitions (its not as easy, maybe its not worth such efforts)
+- [ ] add on-sort transitions (but maybe its not worth such efforts)
 - [ ] try to simulate behaviour as if the pointer was in the helper's center (it looks better)
 
 
 ### important
 
-- [ ] check global variables (vendorPrefix, manager, ...) minimize them to make this project easy-importable
 - [ ] scroll X only if pointer within Y-bounds of a container and vice versa
 - [ ] don't scroll containers and window simultaneously (window is first)
 - [ ] add the step `resizeHelper` after `moveHelperToGhost`
@@ -47,5 +46,6 @@ handlers:
 
 ### Bugs
 
-- [ ] losing initial scroll when switching container
+- [x] losing initial scroll when switching container (it works, actual problem is the next bug)
+- [x] losing initial window scroll
 
