@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drag & drop | Cards</title>
+    <title>Vue | Dragondrop</title>
 
-    <link rel="stylesheet" href="normalize.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/normalize.css">
+    <link rel="stylesheet" href="assets/style.css">
 
 </head>
 <body>
     <article id="app">
-        <h1>VueJS: Drag & drop cards</h1>
+        <h1>VueJS Dragondrop</h1>
         <div class="container">
             <Container v-for="list in lists" :list="list.items">
                 <Draggable
@@ -21,14 +21,10 @@
             </Container>
         </div>
 
-        <!-- <hr> -->
-        <!-- <div class="container">
-            <div v-for="list in lists" class="info">list: @{list.id}, items: @{list.items.map(i=> i.id)}</div>
-        </div> -->
-        <div hidden>
+        <!-- <div class="board info">
             <div>dragging: @{manager.dragging ? manager.dragging.item.id : 'null'}</div>
             <div>hovered: @{manager.hovered ? manager.hovered.item.id : 'null'}</div>
-        </div>
+        </div> -->
     </article>
 </body>
 
