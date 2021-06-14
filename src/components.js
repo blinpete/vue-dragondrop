@@ -1,17 +1,20 @@
 
-// import {ContainerMixin} from "./_container.js"
+import {ContainerMixin} from "./Container"
+import {ElementMixin} from "./Element"
 
-Vue.component("Container",{
+export const vddContainer = {
+    name: 'vdd-container',
     mixins: [ContainerMixin],
     render(h){
         return h('ul', {class: ["list"], style: this.style}, this.$slots.default);
     },
-});
+};
 
 
-Vue.component("Draggable",{
+export const vddElement = {
+    name: 'vdd-element',
     mixins: [ElementMixin],
     render(h){
         return h('li', {class: ["item", "unselectable"], style: this.style}, this.$slots.default);
     },
-});
+};

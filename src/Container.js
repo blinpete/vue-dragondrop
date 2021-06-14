@@ -1,8 +1,10 @@
 
-// import {eventManager} from "./_utils"
+import {eventManager, arrayMoveElement} from "./utils"
+import {manager} from "./Manager"
 
 
-const ContainerMixin = {
+
+export const ContainerMixin = {
   props: {
     list:                       { type: Array, required: true },
     axis:                       { type: String,  default: 'y' }, // 'x', 'y', 'xy'

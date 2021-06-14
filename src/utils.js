@@ -1,6 +1,6 @@
 
 
-const eventManager = {
+export const eventManager = {
   start: ['touchstart', 'mousedown'],
   move: ['touchmove', 'mousemove'],
   end: ['touchend', 'touchcancel', 'mouseup'],
@@ -19,14 +19,14 @@ const eventManager = {
   },
 };
 
-function getCSSPixelValue(stringValue) {
+export function getCSSPixelValue(stringValue) {
   if (stringValue.substr(-2) === 'px') {
     return parseFloat(stringValue);
   }
   return 0;
 }
 
-function getElementMargin(element) {
+export function getElementMargin(element) {
   const style = window.getComputedStyle(element);
 
   return {
@@ -37,7 +37,7 @@ function getElementMargin(element) {
   };
 }
 
-function getElementMeasures(node){
+export function getElementMeasures(node){
   const rect = node.getBoundingClientRect();
   const margins = getElementMargin(node);
   return {
@@ -48,7 +48,7 @@ function getElementMeasures(node){
   }
 }
 
-function getElementCenter(node, mode='xy'){
+export function getElementCenter(node, mode='xy'){
   const m = getElementMeasures(node);
   const center = {};
 
@@ -58,14 +58,14 @@ function getElementCenter(node, mode='xy'){
   return center;
 }
 
-function getOffset(e) {
+export function getOffset(e) {
   return {
     x: e.touches ? e.touches[0].pageX : e.pageX,
     y: e.touches ? e.touches[0].pageY : e.pageY,
   };
 }
 
-function arrayMoveElement(from, to){
+export function arrayMoveElement(from, to){
 
   // Edge case: moving an element forward within its array
   //    You'll move the element out of the array first,
@@ -79,7 +79,7 @@ function arrayMoveElement(from, to){
 }
 
 
-function calcScroll(pos, edges){
+export function calcScroll(pos, edges){
 
   if (pos > edges.max) return pos - edges.max;     // Scroll down/right
   if (pos < edges.min) return pos - edges.min;    // Scroll up/left
@@ -90,7 +90,7 @@ function calcScroll(pos, edges){
 
 
 
-const vendorPrefix = (function() {
+export const vendorPrefix = (function() {
   if (typeof window === 'undefined' || typeof document === 'undefined') return ''; // server environment
   // fix for:
   //  https://bugzilla.mozilla.org/show_bug.cgi?id=548397

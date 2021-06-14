@@ -1,8 +1,10 @@
 
-// import {eventManager} from "./_utils"
+import {eventManager} from "./utils"
+import {manager} from "./Manager"
 
 
-const ElementMixin = {
+
+export const ElementMixin = {
   props: {
     index: Number,
     item: Object,

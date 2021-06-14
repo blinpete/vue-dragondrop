@@ -1,5 +1,7 @@
 
-const manager = {
+import {getOffset, calcScroll, getElementCenter, getElementMeasures, vendorPrefix} from './utils'
+
+export const manager = {
 
     ghost: {
       node: null,
@@ -153,14 +155,14 @@ const manager = {
 
 
       // Remove the helper from the DOM ---------------------------------------
-      _helper = this.helper.node;
+      let _helper = this.helper.node;
 
       setTimeout((e)=>{
         console.log('[moveHelperToGhost] removing helper');
         _helper.parentNode.removeChild(_helper);
       }, duration);
 
-      // it won't work in case when there was no animation (quick single click)
+      // it won't work if there is no animation (quick single click)
       // _helper.addEventListener('transitionend', (e)=>{
       //   console.log('[moveHelperToGhost] removing helper');
       //   _helper.parentNode.removeChild(_helper);
