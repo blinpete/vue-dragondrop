@@ -23,7 +23,7 @@ const manager = {
       }
     },
 
-    appendTo: 'body',
+    appendTo: 'body',   // where to append the helper node
 
     intervals: {},
 
@@ -109,7 +109,12 @@ const manager = {
       let targetX = 0;
       let targetY = 0;
 
-      let scroll = {
+      let wScroll = {
+        left: this.scroll.window.scrollLeft,
+        top: this.scroll.window.scrollTop,
+      };
+
+      let cScroll = {
         left: this.scroll.container.scrollLeft,
         top: this.scroll.container.scrollTop,
       };
@@ -133,12 +138,17 @@ const manager = {
       // console.log('helper: ', helper.left);
 
 
-      targetX = -scroll.left + ghost.left - helper.left;
-      targetY = -scroll.top + ghost.top - helper.top;
+      targetX = -wScroll.left -cScroll.left + ghost.left - helper.left;
+      targetY = -wScroll.top  -cScroll.top  + ghost.top  - helper.top;
 
 
 
       this.helper.node.style[`${vendorPrefix}Transform`] = `translate3d(${targetX}px,${targetY}px, 0)`;
+
+      // resize helper to ghost
+      // this.helper.node.style[`${vendorPrefix}Transform`] += ` scaleX(${ghost.width/helper.width})`;
+      // this.helper.node.style[`${vendorPrefix}Transform`] += ` scaleY(${ghost.height/helper.height})`;
+
       this.helper.node.style[`${vendorPrefix}TransitionDuration`] = `${duration}ms`;
 
 
@@ -267,6 +277,10 @@ const manager = {
         this.helper.node.classList.add(...this.helper.class.split(' '));
     },
 
+    onPress(e){
+      // move container.handlePress here
+
+    },
 };
 
 
