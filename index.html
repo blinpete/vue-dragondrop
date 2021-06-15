@@ -13,12 +13,12 @@
     <article id="app">
         <h1>VueJS Dragondrop</h1>
         <div class="container">
-            <vdd-container v-for="list in lists" :list="list.items">
-                <vdd-element
+            <Container v-for="list in lists" :list="list.items">
+                <Draggable
                     v-for="(item,idx) in list.items" :key="item.id" class="item"
                     :index="idx" :item="item" :style="item.style"
-                >@{item.text}</vdd-element>
-            </vdd-container>
+                >@{item.text}</Draggable>
+            </Container>
         </div>
 
         <!-- <div class="board info">
