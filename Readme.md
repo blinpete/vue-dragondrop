@@ -1,7 +1,8 @@
 
+![demo](./assets/demo.gif)
+
 Vue Dragon🐉drop💧
 ---
-![demo](./assets/demo.gif)
 
 A dead-simple Drag & Drop implementation relying on mouse events.
 
@@ -9,17 +10,6 @@ Highlights:
 - no HTML5 Drag & Drop API
 - simple code design
 - No dependencies (VueJS 2.x is the only peerDependency)
-
-The project is inspired by [vue-slicksort](https://github.com/Jexordexan/vue-slicksort).
-
-Key changes:
-- `manager` does almost all the things (state management, updating containers, scrolling, moving the helper, managing the ghost, etc.)
-- `Container` only stores its unique props like `group`, `hideSortableGhost`, `direction`, etc.
-- window/container scroll had been rethought (sometimes you should use client coordinates and sometimes document ones)
-- position calculations simplified
-- moving array elements interface changed
-- `eventManager` made more consistent
-
 
 ## Who may find it useful?
 
@@ -66,34 +56,6 @@ const app = new Vue({
 });
 ```
 
-## Code design
-
-```js
-Container
-    hideSortableGhost
-
-Element
-    onHover
-    onLeave
-
-Manager
-    helper              // helper node following the pointer
-    setHelper
-
-    ghost               // preview node
-    setGhost
-    hideGhost
-    revealGhost
-
-    updateContainer
-    autoscroll
-
-    // main handlers
-    onPress
-    onMove
-    onDrop
-```
-
 ## Features
 
 #### Supported
@@ -112,3 +74,14 @@ Manager
 - locking X,Y axes
 - treating the helper center as a pointer (it makes sorting smoother)
 
+
+## Inspiration
+
+The project is inspired by [vue-slicksort](https://github.com/Jexordexan/vue-slicksort) but I did some things differently. There are some key changes
+
+- `manager` does almost all the things (state management, updating containers, scrolling, moving the helper, managing the ghost, etc.)
+- `Container` only stores its unique props like `group`, `hideSortableGhost`, `direction`, etc.
+- window/container scroll had been rethought (sometimes you should use client coordinates and sometimes document ones)
+- position calculations simplified
+- moving array elements interface changed
+- `eventManager` made more consistent
